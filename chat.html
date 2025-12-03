@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>GVH — Chat Support</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#070707;--card:#0f0f10;--gold:#d4af37;--muted:#bfbfbf;--input:#131313}
+    body{margin:0;font-family:'Inter',Arial;background:linear-gradient(180deg,#040404,#0b0b0b);color:#eee;padding:22px}
+    .wrap{max-width:640px;margin:0 auto}
+    .card{background:var(--card);padding:20px;border-radius:12px;border:1px solid rgba(212,175,55,0.06);box-shadow:0 10px 30px rgba(0,0,0,0.6)}
+    h1{margin:0;color:var(--gold)}
+    .small{color:var(--muted);font-size:13px;margin-top:6px}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+    input,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:var(--input);color:#fff;margin-top:6px}
+    button{background:var(--gold);border:none;padding:10px 14px;border-radius:8px;color:#051018;font-weight:700;cursor:pointer;margin-top:10px}
+    .messages{margin-top:14px;height:300px;overflow:auto;padding:10px;border-radius:8px;background:#0b0b0b}
+    .msg{display:flex;gap:10px;margin-bottom:10px}
+    .bubble{padding:10px;border-radius:12px;max-width:80%}
+    .guest .bubble{background:#12212a;color:#fff;border-top-left-radius:0}
+    .admin .bubble{background:var(--gold);color:#051018;border-top-right-radius:0}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Chat with GVH</h1>
+      <div class="small">Ask about pickup, pricing or tracking — we'll reply here.</div>
+
+      <div class="form-row">
+        <input id="name" placeholder="Name">
+        <input id="phone" placeholder="Phone">
+      </div>
+      <input id="pickup" placeholder="Pickup area">
+      <input id="dest" placeholder="Destination">
+      <textarea id="message" rows="3" placeholder="Message (parcel details)"></textarea>
+      <button id="sendBtn">Send Message</button>
+
+      <div class="messages" id="messages"></div>
+      <div style="margin-top:12px;color:var(--muted)">Call: <strong>9547508342</strong></div>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.25.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.25.0/firebase-database-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBYyc6NM2tw-dOICdGV4qm3MDLxNbROKec",
+      authDomain: "gvh-chat.firebaseapp.com",
+      databaseURL: "https://gvh-chat-default-rtdb.firebaseio.com/",
+      projectId: "gvh-chat",
+      storageBucket: "gvh-chat.firebasestorage.app",
+      messagingSenderId: "861854705186",
+      appId: "1:861854705186:web:d7b3d593451f5295e88c7b"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    let guestId = localStorage.getItem('gvh_guestId');
+    if(!guestId){ guestId = 'g_'+Math.random().toString(36).slice(2,10); localStorage.setItem('gvh_guestId', guestId); }
+
+    const messagesDiv = document.getElementById('messages');
+
+    function appendBubble(text, cls, meta){
+      const wrap = document.createElement('div'); wrap.className = 'msg '+cls;
+      const bubble = document.createElement('div'); bubble.className = 'bubble';
+      bubble.innerHTML = text + (meta?('<div style="font-size:12px;color:#bfbfbf;margin-top:6px">'+meta+'</div>'):'');
+      wrap.appendChild(bubble); messagesDiv.appendChild(wrap); messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    document.getElementById('sendBtn').onclick = ()=>{
+      const name = document.getElementById('name').value.trim() || 'Guest';
+      const phone = document.getElementById('phone').value.trim() || '';
+      const pickup = document.getElementById('pickup').value.trim() || '';
+      const dest = document.getElementById('dest').value.trim() || '';
+      const text = document.getElementById('message').value.trim();
+      if(!text) return alert('Write a message');
+
+      const payload = { guestId, name, phone, pickup, dest, message: text, timestamp: Date.now(), status:'new', from:'guest' };
+      db.ref('chats').push(payload).then(()=>{
+        appendBubble('You: '+text, 'guest', new Date().toLocaleString());
+        document.getElementById('message').value='';
+      }).catch(e=>alert('Send failed: '+e.message));
+    };
+
+    // show messages for this guest
+    db.ref('chats').orderByChild('guestId').equalTo(guestId).on('value', snap=>{
+      messagesDiv.innerHTML = '';
+      snap.forEach(s=>{
+        const v = s.val();
+        appendBubble(v.message, 'guest', new Date(v.timestamp).toLocaleString());
+        if(v.replies) Object.values(v.replies).forEach(r=> appendBubble('GVH: '+r.message, 'admin', new Date(r.ts).toLocaleString()));
+      });
+    });
+  </script>
+</body>
+</html>
