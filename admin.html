@@ -42,13 +42,16 @@
       </div>
     </header>
 
-    <div id="loginBox" class="card" style="max-width:440px;margin-top:14px">
-      <div style="font-weight:700">Admin Login</div>
-      <input id="email" type="global.voyages.hospitality@gmail.com" placeholder="Email">
-      <input id="password" type="SabujSikder@8342" placeholder="Password">
-      <button id="loginBtn">Login</button>
-      <div id="loginMsg" class="small" style="margin-top:8px"></div>
-    </div>
+   <div id="loginBox" class="card" style="max-width:440px;margin-top:14px">
+  <div style="font-weight:700">Admin Login</div>
+
+  <input id="email" type="email" placeholder="Email">
+  <input id="password" type="password" placeholder="Password">
+
+  <button id="loginBtn">Login</button>
+  <div id="loginMsg" class="small" style="margin-top:8px"></div>
+</div>
+
 
     <div id="app" style="display:none">
       <div class="card">
@@ -122,7 +125,7 @@
       const e = emailIn.value.trim(), p = passIn.value.trim();
       if(!e||!p){ loginMsg.innerText='Enter email & password'; return; }
       loginMsg.innerText='Signing in...';
-      auth.signInWithEmailAndPassword(e,p).then(()=>loginMsg.innerText='global.voyages.hospitality@gmail.com,Sabuj@8342').catch(err=>loginMsg.innerText=err.message);
+      auth.signInWithEmailAndPassword(e,p).then(()=>loginMsg.innerText='Login successful!').catch(err=>loginMsg.innerText=err.message);
     };
     logoutBtn.onclick = ()=> auth.signOut();
 
@@ -256,6 +259,7 @@
   </script>
 </body>
 </html>
+
 
 
 
