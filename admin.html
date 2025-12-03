@@ -122,7 +122,7 @@
       const e = emailIn.value.trim(), p = passIn.value.trim();
       if(!e||!p){ loginMsg.innerText='Enter email & password'; return; }
       loginMsg.innerText='Signing in...';
-      auth.signInWithEmailAndPassword(e,p).then(()=>loginMsg.innerText='').catch(err=>loginMsg.innerText=err.message);
+      auth.signInWithEmailAndPassword(e,p).then(()=>loginMsg.innerText='global.voyages.hospitality@gmail.com,Sabuj@8342').catch(err=>loginMsg.innerText=err.message);
     };
     logoutBtn.onclick = ()=> auth.signOut();
 
@@ -256,3 +256,4 @@
   </script>
 </body>
 </html>
+
