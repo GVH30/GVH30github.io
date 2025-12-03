@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Global Voyages & Hospitality — Chat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --gold: #d4af37;
+      --muted: #cfcfcf;
+      --input-bg: #121212;
+      --input-border: #333;
+      --shadow: rgba(0,0,0,0.5);
+    }
+    body {
+      margin:0;
+      font-family: 'Inter', Arial, sans-serif;
+      background: var(--bg);
+      color: #eee;
+    }
+    .wrap {
+      max-width: 520px;
+      margin: 32px auto;
+      padding: 18px;
+    }
+    .card {
+      background: #111;
+      border-radius: 16px;
+      padding: 24px;
+      border: 1px solid rgba(212,175,55,0.06);
+      box-shadow: 0 4px 20px var(--shadow);
+    }
+    header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .logo {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .logo img { width:100%; height:100%; object-fit:cover; display:block; }
+    h1 { margin:0; font-size:22px; color: var(--gold); }
+    .small { color: var(--muted); font-size:13px; margin-top:4px; }
+    label { display:block; margin-top:12px; color: var(--muted); font-size:13px; }
+    input, textarea {
+      width:100%; padding:10px; border-radius:8px;
+      border:1px solid var(--input-border); background:var(--input-bg);
+      color:#fff; margin-top:6px; transition:border 0.3s;
+    }
+    input:focus, textarea:focus { border-color: var(--gold); outline:none; }
+    button {
+      background: var(--gold); border:none; padding:12px 18px;
+      border-radius:10px; font-weight:700; color:#051018; cursor:pointer;
+      margin-top:16px; transition: background 0.3s;
+    }
+    button:hover { background: #c49f2f; }
+    .messages {
+      margin-top:16px; max-height:350px; overflow-y:auto;
+      display:flex; flex-direction:column; gap:10px;
+      padding:10px; border-radius:8px; border:1px solid rgba(212,175,55,0.03);
+      background:#121212;
+    }
+    .msg {
+      display:flex; align-items:flex-start; gap:10px;
+      opacity:0; transform:translateY(10px);
+      animation: fadeInUp 0.3s forwards;
+    }
+    .msg .bubble {
+      max-width:70%;
+      padding:10px 14px;
+      border-radius:16px;
+      word-wrap: break-word;
+      font-size:14px;
+    }
+    .msg.guest { flex-direction: row; }
+    .msg.guest .bubble { background:#1c2b35; color:#fff; border-top-left-radius:0; }
+    .msg.admin { flex-direction: row-reverse; }
+    .msg.admin .bubble { background: var(--gold); color:#051018; border-top-right-radius:0; }
+    .msg img { width:32px; height:32px; border-radius:50%; object-fit:cover; }
+    .meta { font-size:12px; color: var(--muted); margin-top:4px; text-align:right; }
+    @keyframes fadeInUp { to { opacity:1; transform:translateY(0); } }
+    .footer { margin-top:16px; color:var(--muted); font-size:13px; text-align:center; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <header>
+        <div class="logo"><img src="logo.png" alt="GVH Logo"></div>
+        <div>
+          <h1>Global Voyages & Hospitality</h1>
+          <div class="small">Courier Service — Domestic & International</div>
+        </div>
+      </header>
+
+      <p class="small">Ask about pickup, pricing, or tracking. Our team will reply here.</p>
+
+      <label>Name</label><input id="name" placeholder="Your name">
+      <label>Phone</label><input id="phone" placeholder="+91 9xxxxxxxxx">
+      <label>Pickup Area</label><input id="pickup" placeholder="Pickup address / area">
+      <label>Destination</label><input id="dest" placeholder="Delivery address / city">
+      <label>Message (parcel details)</label><textarea id="message" rows="3" placeholder="Describe the parcel, weight, urgent?"></textarea>
+      <button id="sendBtn">Send Message</button>
+
+      <div class="messages" id="messages"></div>
+      <div class="small">Call us if needed: <strong>9547508342 / 7001443800</strong></div>
+      <div class="footer">Address: Vill & P.O. – Fatepur, P.S. – Falta, Dist. – South 24 Parganas, West Bengal — PIN: 743515</div>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.25.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.25.0/firebase-database-compat.js"></script>
+  <script>
+    const firebaseConfig = FIREBASE_CONFIG_HERE;
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    let guestId = localStorage.getItem('gvh_guestId');
+    if(!guestId){ guestId = 'g_'+Math.random().toString(36).slice(2,10); localStorage.setItem('gvh_guestId', guestId); }
+
+    const nameIn=document.getElementById('name'), phoneIn=document.getElementById('phone');
+    const pickupIn=document.getElementById('pickup'), destIn=document.getElementById('dest');
+    const msgIn=document.getElementById('message'), sendBtn=document.getElementById('sendBtn');
+    const messagesDiv=document.getElementById('messages');
+
+    function appendMessage(text, cls, meta){
+      const el=document.createElement('div'); el.className='msg '+cls;
+      el.innerHTML=`<img src="${cls==='guest'?'https://i.pravatar.cc/32?u=guest':'logo.png'}" alt="avatar">
+                    <div class="bubble">${text}<div class="meta">${meta||''}</div></div>`;
+      messagesDiv.appendChild(el);
+      messagesDiv.scrollTo({ top: messagesDiv.scrollHeight, behavior: 'smooth' });
+    }
+
+    sendBtn.addEventListener('click', ()=>{
+      const name=nameIn.value.trim()||'Guest';
+      const phone=phoneIn.value.trim()||'';
+      const pickup=pickupIn.value.trim()||'';
+      const dest=destIn.value.trim()||'';
+      const text=msgIn.value.trim();
+      if(!text) return alert('Write a message before sending.');
+      const payload={guestId,name,phone,pickup,dest,message:text,timestamp:Date.now(),status:'new',from:'guest'};
+      db.ref('chats').push(payload).then(()=>{
+        appendMessage('You: '+text,'guest','Waiting for reply...');
+        msgIn.value='';
+      }).catch(err=>alert('Send failed: '+err.message));
+    });
+
+    db.ref('chats').on('child_changed', snap=>{
+      const data=snap.val();
+      if(data && data.guestId===guestId && data.replies){
+        Object.keys(data.replies).forEach(k=>{
+          const r=data.replies[k];
+          appendMessage('GVH: '+r.message,'admin',new Date(r.ts).toLocaleString());
+        });
+      }
+    });
+  </script>
+</body>
+</html>
