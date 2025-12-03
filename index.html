@@ -63,6 +63,16 @@
 
         <form id="quoteForm" autocomplete="off">
           <div class="full">
+            <label>Select Courier Partner *</label>
+            <select id="select_courier_partner" required>
+              <option value="">Choose mode</option>
+              <option>Blue Dart</option>
+              <option>DTDC</option>
+              <option>Delhivery</option>
+              </select>
+             </div>
+          
+          <div class="full">
             <label>Shipping Mode *</label>
             <select id="shipping_mode" required>
               <option value="">Choose mode</option>
@@ -83,8 +93,8 @@
           </div>
 
           <div>
-            <label>Arrival Country *</label>
-            <select id="arrival_country" required></select>
+            <label>Destination Pincode *</label>
+            <input id="destination_pincode" placeholder="Pin code" required>
           </div>
 
           <div>
@@ -249,5 +259,6 @@
   </script>
 </body>
 </html>
+
 
 
