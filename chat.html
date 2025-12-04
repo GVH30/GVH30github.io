@@ -5,7 +5,6 @@
   <title>GVH — Chat Support</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
   <style>
     :root{--bg:#070707;--card:#0f0f10;--gold:#d4af37;--muted:#bfbfbf;--input:#131313}
     body{margin:0;font-family:'Inter',Arial;background:linear-gradient(180deg,#040404,#0b0b0b);color:#eee;padding:22px}
@@ -27,7 +26,7 @@
   <div class="wrap">
     <div class="card">
       <h1>Chat with GVH</h1>
-      <div class="small">Ask about pickup, pricing or tracking — we'll reply here.</div>
+      <div class="small">We reply instantly — type your parcel details.</div>
 
       <div class="form-row">
         <input id="name" placeholder="Name">
@@ -39,7 +38,6 @@
       <button id="sendBtn">Send Message</button>
 
       <div class="messages" id="messages"></div>
-      <div style="margin-top:12px;color:var(--muted)">Call: <strong>9547508342</strong></div>
     </div>
   </div>
 
@@ -48,21 +46,20 @@
   <script src="https://www.gstatic.com/firebasejs/9.25.0/firebase-database-compat.js"></script>
 
   <script>
-    /* ✔ CORRECT FIREBASE PROJECT (same as index + admin) */
     const firebaseConfig = {
-      apiKey: "AIzaSyBYyc6NM2tw-dOICdGV4qm3MDLxNbROKec",
-      authDomain: "gvh-chat.firebaseapp.com",
-      databaseURL: "https://gvh-chat-default-rtdb.firebaseio.com/",
-      projectId: "gvh-chat",
-      storageBucket: "gvh-chat.firebasestorage.app",
-      messagingSenderId: "861854705186",
-      appId: "1:861854705186:web:d7b3d593451f5295e88c7b"
+      apiKey: "AIzaSyDVcsRaPihq3hoNiEjnIyUgncIL98nJh04",
+      authDomain: "gvh30-40e07.firebaseapp.com",
+      databaseURL: "https://gvh30-40e07-default-rtdb.asia-southeast1.firebasedatabase.app/",
+      projectId: "gvh30-40e07",
+      storageBucket: "gvh30-40e07.firebasestorage.app",
+      messagingSenderId: "999635428816",
+      appId: "1:999635428816:web:15a48e752b1621c84005d5"
     };
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    /* Assign Guest ID */
+    // Guest ID
     let guestId = localStorage.getItem("gvh_guestId");
     if (!guestId) {
       guestId = "g_" + Math.random().toString(36).substring(2, 10);
@@ -71,58 +68,44 @@
 
     const messagesDiv = document.getElementById("messages");
 
-    function appendBubble(text, cls, meta) {
-      const wrap = document.createElement("div");
-      wrap.className = "msg " + cls;
-
-      const bubble = document.createElement("div");
-      bubble.className = "bubble";
-      bubble.innerHTML = text + (meta ? `<div style='font-size:12px;color:#bfbfbf;margin-top:6px'>${meta}</div>` : "");
-
-      wrap.appendChild(bubble);
-      messagesDiv.appendChild(wrap);
+    function addBubble(text, who, time){
+      const box = document.createElement("div");
+      box.className = "msg " + who;
+      box.innerHTML = `<div class="bubble">${text}<div style="font-size:12px;color:#bfbfbf;margin-top:6px">${time}</div></div>`;
+      messagesDiv.appendChild(box);
       messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
 
-    /* Send message */
+    // Send message
     document.getElementById("sendBtn").onclick = () => {
-      const name = document.getElementById("name").value.trim() || "Guest";
-      const phone = document.getElementById("phone").value.trim();
-      const pickup = document.getElementById("pickup").value.trim();
-      const dest = document.getElementById("dest").value.trim();
-      const text = document.getElementById("message").value.trim();
-
-      if (!text) return alert("Write a message");
-
-      const payload = {
+      const data = {
         guestId,
-        name,
-        phone,
-        pickup,
-        dest,
-        message: text,
+        name: document.getElementById("name").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+        pickup: document.getElementById("pickup").value.trim(),
+        dest: document.getElementById("dest").value.trim(),
+        message: document.getElementById("message").value.trim(),
         timestamp: Date.now(),
         from: "guest"
       };
 
-      db.ref("chats").push(payload).then(() => {
-        appendBubble("You: " + text, "guest", new Date().toLocaleString());
-        document.getElementById("message").value = "";
-      });
+      if (!data.message) return alert("Please type a message");
+
+      db.ref("chats").push(data);
+      document.getElementById("message").value = "";
     };
 
-    /* Load messages for this guest only */
+    // Load only this user's chat
     db.ref("chats").orderByChild("guestId").equalTo(guestId).on("value", snap => {
       messagesDiv.innerHTML = "";
 
       snap.forEach(child => {
         const msg = child.val();
-
-        appendBubble(msg.message, "guest", new Date(msg.timestamp).toLocaleString());
+        addBubble(msg.message, "guest", new Date(msg.timestamp).toLocaleString());
 
         if (msg.replies) {
           Object.values(msg.replies).forEach(r => {
-            appendBubble("GVH: " + r.message, "admin", new Date(r.ts).toLocaleString());
+            addBubble("GVH: " + r.message, "admin", new Date(r.ts).toLocaleString());
           });
         }
       });
