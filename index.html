@@ -2,144 +2,64 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>GVH Logistics</title>
+  <title>GVH Transport Services</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
   <style>
-    :root{
-      --bg:#070707;
-      --card:#0f0f10;
-      --gold:#d4af37;
-      --muted:#bfbfbf;
-      --input:#131313;
+    body {
+      margin: 0;
+      font-family: 'Inter', Arial;
+      background: #070707;
+      color: #f1f1f1;
+      padding: 25px;
     }
-    body{
-      margin:0;
-      font-family:'Inter',Arial;
-      background:linear-gradient(180deg,#040404,#0b0b0b);
-      color:#eee;
-      padding:22px;
+    .wrap {
+      max-width: 720px;
+      margin: auto;
     }
-    .wrap{
-      max-width:640px;
-      margin:0 auto;
+    h1 { color: #d4af37; }
+    .quote-box {
+      background: #0f0f10;
+      padding: 20px;
+      margin-top: 20px;
+      border-radius: 12px;
+      border: 1px solid rgba(212,175,55,0.2);
     }
-    .card{
-      background:var(--card);
-      padding:20px;
-      border-radius:12px;
-      border:1px solid rgba(212,175,55,0.06);
-      box-shadow:0 10px 30px rgba(0,0,0,0.6);
-    }
-    h1{
-      margin:0;
-      color:var(--gold);
-      font-size:28px;
-      text-align:center;
-    }
-    .quoteBox{
-      color:var(--gold);
-      text-align:center;
-      margin-top:16px;
-      font-size:17px;
-      font-weight:600;
-      min-height:28px;
-      transition:opacity .6s;
-      opacity:1;
-    }
-    .form-row{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-      margin-top:14px;
-    }
-    input,textarea{
-      width:100%;
-      padding:10px;
-      border-radius:8px;
-      border:1px solid rgba(255,255,255,0.07);
-      background:var(--input);
-      color:#fff;
-      margin-top:10px;
-    }
-    button{
-      background:var(--gold);
-      border:none;
-      padding:12px 14px;
-      border-radius:8px;
-      color:#051018;
-      font-weight:700;
-      cursor:pointer;
-      margin-top:14px;
-      width:100%;
-      font-size:16px;
-    }
-    .note{
-      text-align:center;
-      color:var(--muted);
-      margin-top:16px;
-      font-size:14px;
+    .quote { font-size: 20px; margin-bottom: 6px; }
+    .author { color: #bfbfbf; font-size: 14px; }
+    .btn {
+      margin-top: 20px;
+      display: inline-block;
+      background: #d4af37;
+      color: #000;
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-size: 17px;
+      font-weight: 700;
+      text-decoration: none;
     }
   </style>
 </head>
-
 <body>
+
   <div class="wrap">
-    <div class="card">
+    <h1>GVH Delivery & Parcel Service</h1>
+    <p>Fast, secure and reliable delivery anywhere. Chat with us for instant support!</p>
 
-      <h1>GVH Logistics</h1>
-
-      <!-- ROTATING QUOTES -->
-      <div id="quoteBox" class="quoteBox"></div>
-
-      <!-- FORM -->
-      <div class="form-row">
-        <input id="name" placeholder="Your Name">
-        <input id="phone" placeholder="Phone Number">
-      </div>
-
-      <input id="pickup" placeholder="Pickup Area">
-      <input id="destination" placeholder="Destination">
-
-      <textarea id="details" rows="3" placeholder="Parcel Details..."></textarea>
-
-      <button onclick="alert('Message Sent! (Demo Only)')">Get Quote</button>
-
-      <div class="note">Call us: <strong>9547508342</strong></div>
+    <!-- STATIC QUOTES -->
+    <div class="quote-box">
+      <div class="quote">“Fast Delivery Begins With Trust.”</div>
+      <div class="author">— GVH Logistics</div>
     </div>
+
+    <div class="quote-box">
+      <div class="quote">“Your Parcel, Our Priority.”</div>
+      <div class="author">— GVH Team</div>
+    </div>
+
+    <!-- CHAT BUTTON -->
+    <a href="chat.html" class="btn">Open Live Chat</a>
   </div>
-
-  <!-- QUOTES SCRIPT -->
-  <script>
-    const quotes = [
-      "Fast, safe & secure delivery — every time.",
-      "Your parcel, delivered with care.",
-      "We pick up from your door and deliver to theirs.",
-      "Reliable delivery across Kerala & Tamil Nadu.",
-      "Affordable rates — premium service.",
-      "Track your parcel anytime, anywhere.",
-      "Express pickup available — call us now.",
-      "Trusted by businesses & individuals daily.",
-      "Your delivery is our responsibility.",
-      "GVH Logistics — moving your world forward."
-    ];
-
-    let i = 0;
-    const box = document.getElementById("quoteBox");
-
-    function rotateQuotes() {
-      box.style.opacity = 0;
-      setTimeout(() => {
-        box.innerText = quotes[i];
-        box.style.opacity = 1;
-        i = (i + 1) % quotes.length;
-      }, 600);
-    }
-
-    rotateQuotes();
-    setInterval(rotateQuotes, 5000);
-  </script>
 
 </body>
 </html>
