@@ -61,17 +61,18 @@
       <div class="right">
         <div style="font-weight:700;font-size:16px;color:var(--gold);margin-bottom:10px">Request a Quote</div>
 
-        <form id="quoteForm" autocomplete="off">
+        <form id="quoteForm">
+          
           <div class="full">
             <label>Select Courier Partner *</label>
             <select id="select_courier_partner" required>
-              <option value="">Choose mode</option>
+              <option value="">Choose partner</option>
               <option>Blue Dart</option>
               <option>DTDC</option>
               <option>Delhivery</option>
-              </select>
-             </div>
-          
+            </select>
+          </div>
+
           <div class="full">
             <label>Shipping Mode *</label>
             <select id="shipping_mode" required>
@@ -84,75 +85,79 @@
               <option>Air Freight</option>
               <option>Sea Freight (LCL)</option>
               <option>Road Freight</option>
-              </select>
+            </select>
           </div>
 
           <div>
             <label>Origin Pincode *</label>
-            <input id="origin_pincode" placeholder="Pin code" required>
+            <input id="origin_pincode" required>
           </div>
 
           <div>
             <label>Destination Pincode *</label>
-            <input id="destination_pincode" placeholder="Pin code" required>
+            <input id="destination_pincode" required>
           </div>
 
           <div>
-            <label>Approx Arrival Date</label>
+            <label>Arrival Date</label>
             <input type="date" id="arrival_date">
           </div>
 
           <div class="full">
             <label>Product Description *</label>
-            <input id="product" placeholder="Brief Description" required>
+            <input id="product" required>
           </div>
 
           <div>
             <label>Packing Type</label>
-            <select id="packing_type"><option>Container</option><option>Crate</option><option>Box</option></select>
+            <select id="packing_type">
+              <option>Container</option>
+              <option>Crate</option>
+              <option>Box</option>
+            </select>
           </div>
 
           <div>
             <label>Quantity</label>
-            <input id="quantity" type="number" min="1" value="1">
+            <input type="number" id="quantity" min="1" value="1">
           </div>
 
           <div>
             <label>Weight</label>
             <div style="display:flex;gap:8px">
-              <input id="weight" type="number" min="0" step="0.01" placeholder="Total weight">
-              <select id="weight_unit" style="width:110px"><option>KG</option><option>LBS</option><option>TON</option></select>
+              <input type="number" id="weight" min="0" step="0.01">
+              <select id="weight_unit"><option>KG</option><option>LBS</option><option>TON</option></select>
             </div>
           </div>
 
           <div class="full">
             <label>Dimensions (L × W × H)</label>
             <div style="display:flex;gap:8px">
-              <input id="length" type="number" min="0" step="0.1" placeholder="Length">
-              <input id="width" type="number" min="0" step="0.1" placeholder="Width">
-              <input id="height" type="number" min="0" step="0.1" placeholder="Height">
-              <select id="dim_unit" style="width:110px"><option>CM</option><option>IN</option></select>
+              <input type="number" id="length" min="0" step="0.1" placeholder="L">
+              <input type="number" id="width" min="0" step="0.1" placeholder="W">
+              <input type="number" id="height" min="0" step="0.1" placeholder="H">
+              <select id="dim_unit"><option>CM</option><option>IN</option></select>
             </div>
           </div>
 
           <div class="full">
             <label>Contact Name *</label>
-            <input id="contact_name" placeholder="Your full name" required>
+            <input id="contact_name" required>
           </div>
 
           <div>
             <label>Phone *</label>
-            <input id="contact_phone" placeholder="+91" required>
+            <input id="contact_phone" required>
           </div>
 
           <div>
             <label>Email</label>
-            <input id="contact_email" placeholder="optional">
+            <input id="contact_email">
           </div>
 
           <div class="full">
             <label>Other notes</label>
-            <textarea id="notes" placeholder="Special handling, insurance, reference numbers..."></textarea>
+            <textarea id="notes"></textarea>
           </div>
 
           <div class="actions full">
@@ -161,80 +166,68 @@
           </div>
         </form>
 
-        <div id="success" class="success">Thanks — your quote request has been sent. We will contact you soon.</div>
+        <div id="success" class="success">Your request has been sent!</div>
       </div>
     </div>
   </div>
 
-  <footer>Vill &amp; P.O. Fatepur • Falta • South 24 Parganas, WB • PIN 743515 — Call: 9547508342</footer>
+  <footer>Vill & P.O. Fatepur • Falta • South 24 Parganas, WB • PIN 743515 — Call: 9547508342</footer>
 
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.25.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.25.0/firebase-database-compat.js"></script>
+
   <script>
-    // Firebase config (your project)
     const firebaseConfig = {
-      apiKey: "AIzaSyBYyc6NM2tw-dOICdGV4qm3MDLxNbROKec",
-      authDomain: "gvh-chat.firebaseapp.com",
-      databaseURL: "https://gvh-chat-default-rtdb.firebaseio.com/",
-      projectId: "gvh-chat",
-      storageBucket: "gvh-chat.firebasestorage.app",
-      messagingSenderId: "861854705186",
-      appId: "1:861854705186:web:d7b3d593451f5295e88c7b"
+      apiKey: "AIzaSyDVcsRaPihq3hoNiEjnIyUgncIL98nJh04",
+      authDomain: "gvh30-40e07.firebaseapp.com",
+      projectId: "gvh30-40e07",
+      storageBucket: "gvh30-40e07.firebasestorage.app",
+      messagingSenderId: "999635428816",
+      appId: "1:999635428816:web:15a48e752b1621c84005d5",
+      measurementId: "G-LZZVS3F9FP",
+      databaseURL: "https://gvh30-40e07-default-rtdb.asia-southeast1.firebasedatabase.app/"
     };
+
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // Countries (full or trimmed list)
-    const countries = ["India","United States","United Kingdom","United Arab Emirates","China","Germany","Brazil","Australia","Japan","Canada","France","Singapore","Netherlands","Italy","Spain","South Africa","Thailand","Vietnam","Turkey","Egypt","Kenya","Nigeria","Sri Lanka","Bangladesh","Nepal","Pakistan","Indonesia","Malaysia","Philippines","Mexico","Russia","Poland","Belgium","Switzerland","Sweden","Norway","Denmark","Finland","Ireland","Portugal"];
-    const dep = document.getElementById('departure_country'), arr = document.getElementById('arrival_country');
-    countries.forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=c; dep.appendChild(o); arr.appendChild(o.cloneNode(true)); });
+    document.getElementById("submitBtn").addEventListener("click", () => {
 
-    document.getElementById('submitBtn').addEventListener('click', ()=>{
-      const payload = {
-        shipping_mode: document.getElementById('shipping_mode').value,
-        departure_country: document.getElementById('departure_country').value,
-        departure_district: document.getElementById('departure_district').value,
-        departure_type: document.getElementById('departure_type').value,
-        arrival_country: document.getElementById('arrival_country').value,
-        arrival_district: document.getElementById('arrival_district').value,
-        arrival_type: document.getElementById('arrival_type').value,
-        arrival_date: document.getElementById('arrival_date').value||null,
-        cargo: document.getElementById('cargo').value,
-        packing_type: document.getElementById('packing_type').value,
-        incoterms: document.getElementById('incoterms').value,
-        quantity: Number(document.getElementById('quantity').value) || 0,
-        weight: Number(document.getElementById('weight').value) || 0,
-        weight_unit: document.getElementById('weight_unit').value,
-        length: Number(document.getElementById('length').value) || 0,
-        width: Number(document.getElementById('width').value) || 0,
-        height: Number(document.getElementById('height').value) || 0,
-        dim_unit: document.getElementById('dim_unit').value,
-        stackable: document.getElementById('stackable').value,
-        hazardous: document.getElementById('hazardous').value,
-        contact_name: document.getElementById('contact_name').value,
-        contact_phone: document.getElementById('contact_phone').value,
-        contact_email: document.getElementById('contact_email').value,
-        notes: document.getElementById('notes').value,
+      const data = {
+        courier_partner: document.getElementById("select_courier_partner").value,
+        shipping_mode: document.getElementById("shipping_mode").value,
+        origin_pincode: document.getElementById("origin_pincode").value,
+        destination_pincode: document.getElementById("destination_pincode").value,
+        arrival_date: document.getElementById("arrival_date").value || null,
+        product: document.getElementById("product").value,
+        packing_type: document.getElementById("packing_type").value,
+        quantity: Number(document.getElementById("quantity").value) || 0,
+        weight: Number(document.getElementById("weight").value) || 0,
+        weight_unit: document.getElementById("weight_unit").value,
+        length: Number(document.getElementById("length").value) || 0,
+        width: Number(document.getElementById("width").value) || 0,
+        height: Number(document.getElementById("height").value) || 0,
+        dim_unit: document.getElementById("dim_unit").value,
+        contact_name: document.getElementById("contact_name").value,
+        contact_phone: document.getElementById("contact_phone").value,
+        contact_email: document.getElementById("contact_email").value,
+        notes: document.getElementById("notes").value,
         status: "New",
         ts: Date.now()
       };
 
-      if(!payload.shipping_mode || !payload.departure_country || !payload.arrival_country || !payload.cargo || !payload.contact_name || !payload.contact_phone){
-        return alert('Please fill required fields (mode, from, to, cargo, contact name & phone).');
+      if (!data.courier_partner || !data.shipping_mode || !data.origin_pincode ||
+          !data.destination_pincode || !data.product || !data.contact_name || !data.contact_phone) {
+        return alert("Please fill all required fields.");
       }
 
-      db.ref('quotes').push(payload)
-        .then(()=> {
-          document.getElementById('success').style.display='block';
-          document.getElementById('quoteForm').reset();
-          setTimeout(()=>document.getElementById('success').style.display='none',4000);
-        })
-        .catch(e=>alert('Submit failed: '+e.message));
+      db.ref("quotes").push(data).then(() => {
+        document.getElementById("success").style.display = "block";
+        document.getElementById("quoteForm").reset();
+        setTimeout(() => document.getElementById("success").style.display = "none", 4000);
+      });
     });
   </script>
 </body>
 </html>
-
-
-
-
