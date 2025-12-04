@@ -1,514 +1,277 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>GVH Admin — Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>GVH Admin Panel</title>
+
 <style>
-  :root{
-    --bg:#070707; --panel:#0f0f10; --card:#111214; --gold:#d4af37; --muted:#bfbfbf;
-    --glass: rgba(255,255,255,0.03);
-    --radius:12px; --accent:#d4af37;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;font-family:'Inter',Arial;background:linear-gradient(180deg,#030303,#070707);color:#eaeaea}
-  .container{max-width:1200px;margin:18px auto;padding:18px}
-  header{display:flex;align-items:center;justify-content:space-between;gap:12px}
-  h1{margin:0;color:var(--gold);font-size:20px}
-  .small{color:var(--muted);font-size:13px}
-  .auth-box{max-width:440px;margin:26px auto;background:var(--panel);padding:18px;border-radius:12px;border:1px solid rgba(212,175,55,0.06)}
-  .grid{display:grid;grid-template-columns:320px 1fr;gap:16px;margin-top:16px}
-  .panel{background:var(--card);padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);min-height:60vh}
-  .panel h2{margin:0 0 8px 0;color:var(--gold)}
-  input,textarea,select,button{font-family:Inter}
-  input,select,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid var(--glass);background:transparent;color:#fff;margin-top:8px}
-  textarea{min-height:80px;resize:vertical}
-  button{background:var(--gold);border:none;padding:8px 12px;border-radius:8px;color:#051018;font-weight:700;cursor:pointer}
-  .muted{color:var(--muted)}
-  .list{max-height:66vh;overflow:auto;padding:6px}
-  .chat-card{padding:10px;border-radius:10px;background:linear-gradient(180deg,#0b0b0b,#0d0d0d);border:1px solid rgba(255,255,255,0.02);margin-bottom:10px}
-  .chat-header{display:flex;justify-content:space-between;align-items:center;gap:8px}
-  .badge{background:#b23a3a;color:#fff;padding:4px 8px;border-radius:999px;font-weight:700}
-  .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-  .small-btn{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:6px 8px;border-radius:8px;color:var(--muted);cursor:pointer}
-  .reply-list{margin-top:8px}
-  .reply-item{background:var(--gold);color:#051018;padding:8px;border-radius:8px;margin-top:6px}
-  .guest-bubble{background:#081821;padding:8px;border-radius:8px;color:#fff;margin-top:6px}
-  .controls{display:flex;gap:8px;align-items:center}
-  .search{display:flex;gap:8px;margin-bottom:10px}
-  .search input{width:100%}
-  .topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px}
-  .right-controls{display:flex;gap:8px;align-items:center}
-  .mobile-hide{display:inline-block}
-  @media(max-width:980px){.grid{grid-template-columns:1fr}.mobile-hide{display:none}}
-  .gold-tiny{color:var(--gold);font-weight:700}
-  .quiet{color:var(--muted);font-size:13px}
-  .btn-danger{background:#c23a3a;color:#fff}
-  .btn-secondary{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
-  .stats{display:flex;gap:8px;align-items:center}
-  .stat-box{background:linear-gradient(180deg,#0b0b0b,#0d0d0d);padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.02)}
+    body {
+        font-family: Arial;
+        background: #f4f4f4;
+        margin: 0;
+        padding: 0;
+    }
+    .login-box, .panel {
+        width: 500px;
+        background: white;
+        padding: 25px;
+        margin: 40px auto;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    input, textarea {
+        width: 100%;
+        padding: 10px;
+        margin: 8px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    button {
+        padding: 10px 15px;
+        border: none;
+        background: #2196f3;
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 8px;
+    }
+    #panel-content { display: none; }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+        background: #fff;
+    }
+    th, td {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+    }
+    .reply-box {
+        margin-top: 8px;
+        display: flex;
+        gap: 5px;
+    }
 </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <div>
-        <h1>GVH Admin</h1>
-        <div class="small">Live Quotes & Chats</div>
-      </div>
-      <div class="stats">
-        <div class="stat-box"><div class="quiet">Signed in as</div><div id="who" class="gold-tiny">-</div></div>
-        <div id="newBadge" class="stat-box quiet">New: <span id="newCount">0</span></div>
-      </div>
-    </header>
 
-    <!-- AUTH -->
-    <div id="authArea" class="auth-box" style="display:none">
-      <div style="font-weight:700">Admin Login</div>
-      <input id="email" type="email" placeholder="Email">
-      <input id="password" type="password" placeholder="Password">
-      <div style="display:flex;gap:8px;margin-top:10px">
-        <button id="loginBtn">Login</button>
-        <button id="gotoConsole" class="btn-secondary" onclick="window.open('https://console.firebase.google.com', '_blank')">Console</button>
-      </div>
-      <div id="authMsg" class="quiet" style="margin-top:8px"></div>
-    </div>
+<!-- LOGIN SCREEN -->
+<div id="login-box" class="login-box">
+    <h2>Admin Login</h2>
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
+    <button id="login-btn">Login</button>
+    <p id="login-error" style="color:red;"></p>
+</div>
 
-    <!-- DASHBOARD -->
-    <div id="dashboard" style="display:none">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px">
-        <div style="display:flex;gap:12px;align-items:center">
-          <div class="stat-box"><div class="quiet">Quotes</div><div id="quotesCount" class="gold-tiny">0</div></div>
-          <div class="stat-box"><div class="quiet">Chats</div><div id="chatsCount" class="gold-tiny">0</div></div>
-        </div>
+<!-- ADMIN PANEL -->
+<div id="panel-content" class="panel">
+    <h2>GVH Admin Panel</h2>
+    <button id="logout-btn" style="background:#f44336">Logout</button>
 
-        <div class="right-controls">
-          <div class="search">
-            <input id="searchInput" placeholder="Search name / phone / guestId / message">
-            <select id="sortSelect" title="Sort">
-              <option value="newest">Newest</option>
-              <option value="oldest">Oldest</option>
-            </select>
-          </div>
-          <button id="logoutBtn" class="btn-secondary">Logout</button>
-        </div>
-      </div>
+    <h3>Quotes</h3>
 
-      <div class="grid" style="margin-top:12px">
-        <!-- LEFT: Chats -->
-        <div class="panel">
-          <h2>Chats <span id="liveDot" style="color:#53ff7a;margin-left:8px">●</span></h2>
-          <div class="small quiet">Live feed of customer chats. Click a chat to expand details.</div>
+    <input id="quote-text" placeholder="Quote text">
+    <input id="quote-author" placeholder="Author">
+    <button id="add-quote-btn">Add Quote</button>
 
-          <div style="margin-top:10px" class="search">
-            <input id="filterInput" placeholder="Filter by name / phone (local)">
-            <button id="clearFilter" class="small-btn">Clear</button>
-          </div>
+    <table id="quotes-table">
+        <thead><tr><th>Quote</th><th>Author</th><th>Action</th></tr></thead>
+        <tbody></tbody>
+    </table>
 
-          <div class="list" id="chatsList"></div>
-        </div>
+    <h3>Chat Messages</h3>
+    <table id="chat-table">
+        <thead><tr><th>User</th><th>Message</th><th>Reply</th></tr></thead>
+        <tbody></tbody>
+    </table>
+</div>
 
-        <!-- RIGHT: Quotes + Details -->
-        <div class="panel" id="rightPanel">
-          <h2>Quotes</h2>
-          <div class="small quiet">Recent quote requests</div>
-
-          <div style="margin-top:10px" class="search">
-            <input id="filterQuotes" placeholder="Filter quotes by name / phone">
-            <button id="clearQuotes" class="small-btn">Clear</button>
-          </div>
-
-          <div class="list" id="quotesList" style="margin-top:8px"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-<!-- Firebase modular (v10) -->
+<!-- FIREBASE MODULES -->
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import {
-  getAuth,
-  signInWithEmailAndPassword,
-  onAuthStateChanged,
-  signOut
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import {
-  getDatabase,
-  ref,
-  onValue,
-  push,
-  remove,
-  update,
-  get,
-  query,
-  orderByChild
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { 
+        getAuth, 
+        signInWithEmailAndPassword, 
+        onAuthStateChanged, 
+        signOut 
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-// ---------- CONFIG ----------
-const firebaseConfig = {
-  apiKey: "AIzaSyDVcsRaPihq3hoNiEjnIyUgncIL98nJh04",
-  authDomain: "gvh30-40e07.firebaseapp.com",
-  databaseURL: "https://gvh30-40e07-default-rtdb.asia-southeast1.firebasedatabase.app/",
-  projectId: "gvh30-40e07",
-  storageBucket: "gvh30-40e07.firebasestorage.app",
-  messagingSenderId: "999635428816",
-  appId: "1:999635428816:web:15a48e752b1621c84005d5",
-  measurementId: "G-LZZVS3F9FP"
-};
+    import {
+        getDatabase,
+        ref,
+        onValue,
+        update
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getDatabase(app);
+    import { 
+        getFirestore,
+        collection,
+        addDoc,
+        getDocs,
+        deleteDoc,
+        doc
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// ---------- UI Refs ----------
-const authArea = document.getElementById('authArea');
-const dashboard = document.getElementById('dashboard');
-const loginBtn = document.getElementById('loginBtn');
-const logoutBtn = document.getElementById('logoutBtn');
-const emailIn = document.getElementById('email');
-const passIn = document.getElementById('password');
-const authMsg = document.getElementById('authMsg');
-const whoSpan = document.getElementById('who');
+    // --- YOUR FIREBASE CONFIG ---
+    const firebaseConfig = {
+        apiKey: "AIzaSyDVcsRaPihq3hoNiEjnIyUgncIL98nJh04",
+        authDomain: "gvh30-40e07.firebaseapp.com",
+        projectId: "gvh30-40e07",
+        storageBucket: "gvh30-40e07.firebasestorage.app",
+        messagingSenderId: "999635428816",
+        appId: "1:999635428816:web:15a48e752b1621c84005d5",
+        measurementId: "G-LZZVS3F9FP",
+        databaseURL: "https://gvh30-40e07-default-rtdb.asia-southeast1.firebasedatabase.app/"
+    };
 
-const chatsList = document.getElementById('chatsList');
-const quotesList = document.getElementById('quotesList');
-const quotesCount = document.getElementById('quotesCount');
-const chatsCount = document.getElementById('chatsCount');
-const newCountEl = document.getElementById('newCount');
-const newBadge = document.getElementById('newBadge');
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const rtdb = getDatabase(app);
 
-const searchInput = document.getElementById('searchInput');
-const sortSelect = document.getElementById('sortSelect');
-const filterInput = document.getElementById('filterInput');
-const clearFilter = document.getElementById('clearFilter');
+    const loginBox = document.getElementById("login-box");
+    const panelContent = document.getElementById("panel-content");
 
-const filterQuotes = document.getElementById('filterQuotes');
-const clearQuotes = document.getElementById('clearQuotes');
+    // --- LOGIN ---
+    document.getElementById("login-btn").addEventListener("click", async () => {
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value.trim();
+        const errorBox = document.getElementById("login-error");
 
-let cacheChats = {}; // key -> chat object
-let cacheQuotes = {}; // key -> quote
-let unreadCount = 0;
-let lastSeenTimestamps = {}; // guestId -> last msg ts we notified about
-let soundEnabled = true;
-
-// ---------- Audio beep (WebAudio) ----------
-function playBeep() {
-  try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const o = ctx.createOscillator();
-    const g = ctx.createGain();
-    o.type = "sine";
-    o.frequency.value = 880;
-    g.gain.value = 0.05;
-    o.connect(g);
-    g.connect(ctx.destination);
-    o.start();
-    setTimeout(()=>{ o.stop(); ctx.close(); }, 120);
-  } catch(e){ /* ignore audio errors */ }
-}
-
-// ---------- Authentication ----------
-loginBtn.addEventListener('click', async () => {
-  const email = emailIn.value.trim(), pass = passIn.value.trim();
-  if(!email || !pass){ authMsg.innerText = 'Enter email & password'; return; }
-  authMsg.innerText = 'Signing in...';
-  try {
-    await signInWithEmailAndPassword(auth, email, pass);
-    authMsg.innerText = '';
-  } catch(err) {
-    authMsg.innerText = err.message || 'Login failed';
-  }
-});
-
-logoutBtn.addEventListener('click', ()=> signOut(auth));
-
-onAuthStateChanged(auth, user=>{
-  if(user){
-    authArea.style.display = 'none';
-    dashboard.style.display = 'block';
-    whoSpan.innerText = user.email;
-    startListeners();
-  } else {
-    authArea.style.display = 'block';
-    dashboard.style.display = 'none';
-    whoSpan.innerText = '-';
-    // clear lists
-    chatsList.innerHTML = ''; quotesList.innerHTML = '';
-  }
-});
-
-// ---------- Listeners ----------
-function startListeners(){
-  // Chats
-  onValue(ref(db, 'chats'), snap => {
-    cacheChats = snap.val() || {};
-    renderChats();
-    updateUnreadBadge();
-  });
-
-  // Quotes
-  onValue(ref(db, 'quotes'), snap => {
-    cacheQuotes = snap.val() || {};
-    renderQuotes();
-  });
-}
-
-// ---------- Utilities ----------
-function formatTs(ts){ if(!ts) return '-'; return new Date(ts).toLocaleString(); }
-function el(tag, cls){ const e=document.createElement(tag); if(cls) e.className=cls; return e; }
-
-// ---------- Render Chats (grouped by guest) ----------
-function renderChats(){
-  chatsList.innerHTML = '';
-  // Build grouped array keyed by guestId, newest-first
-  const grouped = {}; // guestId -> array of messages
-  Object.keys(cacheChats || {}).forEach(k=>{
-    const msg = cacheChats[k];
-    const guest = msg.guestId || ('g_'+(msg.phone||'').slice(-6));
-    if(!grouped[guest]) grouped[guest]=[];
-    grouped[guest].push({ id:k, ...msg });
-  });
-
-  // Convert to array and sort by newest message ts desc
-  const groups = Object.keys(grouped).map(g=>{
-    const arr = grouped[g].sort((a,b)=> (b.timestamp||0)-(a.timestamp||0));
-    return { guestId:g, lastTs: arr[0].timestamp||0, items:arr };
-  }).sort((a,b)=> b.lastTs - a.lastTs);
-
-  // Apply search filter if any
-  const q = (searchInput.value||'').trim().toLowerCase();
-  const localFilter = (filterInput.value||'').trim().toLowerCase();
-
-  let totalChats = 0;
-  groups.forEach(g=>{
-    // build representative fields for search
-    const first = g.items[0];
-    const name = (first.name||'').toLowerCase();
-    const phone = (first.phone||'').toLowerCase();
-    const anyMsg = g.items.some(it => (it.message||'').toLowerCase().includes(q));
-    const matchesSearch = !q || name.includes(q) || phone.includes(q) || g.guestId.includes(q) || anyMsg;
-
-    const matchesLocal = !localFilter || name.includes(localFilter) || phone.includes(localFilter);
-
-    if(!matchesSearch || !matchesLocal) return;
-
-    totalChats++;
-    const card = el('div','chat-card');
-    const header = el('div','chat-header');
-    const left = el('div');
-    left.innerHTML = `<div style="font-weight:700">${escapeHtml(first.name||'Guest')}</div>
-                      <div class="quiet">${escapeHtml(first.phone||'')}</div>
-                      <div class="quiet">GuestID: ${g.guestId}</div>
-                      <div class="quiet">Last: ${formatTs(g.lastTs)}</div>`;
-    header.appendChild(left);
-
-    const right = el('div');
-    const newBadgeEl = el('div','badge');
-    // compute unread in this group
-    const unread = g.items.filter(it=> (it.status||'new')==='new').length;
-    if(unread>0) newBadgeEl.innerText = unread;
-    else newBadgeEl.style.display='none';
-    right.appendChild(newBadgeEl);
-    header.appendChild(right);
-
-    card.appendChild(header);
-
-    // messages
-    g.items.slice().sort((a,b)=> (a.timestamp||0)-(b.timestamp||0)).forEach(m=>{
-      const msgDiv = el('div', 'guest-bubble');
-      msgDiv.innerHTML = `<div style="font-weight:600">${escapeHtml(m.name||'Guest')} <span class="quiet" style="font-size:12px">• ${formatTs(m.timestamp)}</span></div>
-                          <div style="margin-top:6px">${escapeHtml(m.message||'')}</div>`;
-      card.appendChild(msgDiv);
-
-      // admin replies for this message (if any)
-      if(m.replies){
-        Object.values(m.replies).forEach(r=>{
-          const rdiv = el('div','reply-item');
-          rdiv.innerText = r.message;
-          card.appendChild(rdiv);
-        });
-      }
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+        } catch (err) {
+            errorBox.innerText = "Invalid login!";
+        }
     });
 
-    // actions: quick replies, mark read, delete, reply input
-    const actions = el('div','actions');
-    const tplBtn1 = el('button','small-btn'); tplBtn1.innerText='We will contact you shortly'; tplBtn1.onclick=()=> sendQuickReply(g, 'We will contact you shortly');
-    const tplBtn2 = el('button','small-btn'); tplBtn2.innerText='Parcel is on the way'; tplBtn2.onclick=()=> sendQuickReply(g, 'Your parcel is on the way');
-    const tplBtn3 = el('button','small-btn'); tplBtn3.innerText='Price will be updated soon'; tplBtn3.onclick=()=> sendQuickReply(g, 'Price will be updated soon');
+    // --- AUTH STATE ---
+    onAuthStateChanged(auth, user => {
+        if (user) {
+            loginBox.style.display = "none";
+            panelContent.style.display = "block";
+            loadQuotes();
+            loadChats();
+        } else {
+            loginBox.style.display = "block";
+            panelContent.style.display = "none";
+        }
+    });
 
-    const markBtn = el('button','small-btn'); markBtn.innerText='Mark all read'; markBtn.onclick=()=> markGroupRead(g);
-    const delBtn = el('button','small-btn'); delBtn.innerText='Delete chat'; delBtn.onclick=()=> deleteGroup(g);
+    // --- LOGOUT ---
+    document.getElementById("logout-btn").addEventListener("click", () => {
+        signOut(auth);
+    });
 
-    actions.appendChild(tplBtn1); actions.appendChild(tplBtn2); actions.appendChild(tplBtn3);
-    actions.appendChild(markBtn); actions.appendChild(delBtn);
+    // -------------------------
+    // QUOTES (Firestore)
+    // -------------------------
 
-    card.appendChild(actions);
+    // Add quote
+    document.getElementById("add-quote-btn").addEventListener("click", async () => {
+        const text = document.getElementById("quote-text").value.trim();
+        const author = document.getElementById("quote-author").value.trim();
 
-    // reply input
-    const replyArea = el('div'); replyArea.style.marginTop='8px';
-    const ta = el('textarea'); ta.placeholder = 'Write reply...';
-    const sendBtn = el('button'); sendBtn.innerText='Send reply'; sendBtn.onclick = ()=> {
-      if(!ta.value.trim()) return alert('Type a reply');
-      sendReplyToGroup(g, ta.value.trim());
-      ta.value='';
-    };
-    replyArea.appendChild(ta); replyArea.appendChild(sendBtn);
-    card.appendChild(replyArea);
+        if (!text) return alert("Enter quote text!");
 
-    chatsList.appendChild(card);
-  });
+        await addDoc(collection(db, "Quotes"), {
+            quote: text,
+            author: author
+        });
 
-  chatsCount.innerText = Object.keys(cacheChats||{}).length;
-  if(totalChats===0) chatsList.innerHTML = '<div class="quiet">No chats found</div>';
-}
+        document.getElementById("quote-text").value = "";
+        document.getElementById("quote-author").value = "";
+        loadQuotes();
+    });
 
-// ---------- Render Quotes ----------
-function renderQuotes(){
-  quotesList.innerHTML = '';
-  const entries = Object.keys(cacheQuotes||{}).map(k=> ({ key:k, ...cacheQuotes[k] }));
-  const qfilter = (filterQuotes.value||'').trim().toLowerCase();
-  const filtered = entries.filter(e => !qfilter || (''+(e.contact_name||'')).toLowerCase().includes(qfilter) || (''+(e.contact_phone||'')).toLowerCase().includes(qfilter));
-  // sort newest-first by ts
-  filtered.sort((a,b)=> (b.ts||0)-(a.ts||0));
-  quotesCount.innerText = filtered.length;
+    // Load quotes
+    async function loadQuotes() {
+        const table = document.querySelector("#quotes-table tbody");
+        table.innerHTML = "";
 
-  filtered.forEach(q=>{
-    const card = el('div','chat-card');
-    card.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center">
-      <div><strong>${escapeHtml(q.contact_name||'')}</strong><div class="quiet">${escapeHtml(q.contact_phone||'')}</div></div>
-      <div class="quiet">${formatTs(q.ts)}</div>
-    </div>
-    <div style="margin-top:8px">${escapeHtml(q.product||q.cargo||'')}</div>
-    <div class="actions" style="margin-top:8px">
-      <button class="small-btn" onclick='viewQuote("${q.key}")'>View</button>
-      <button class="small-btn" onclick='deleteQuote("${q.key}")'>Delete</button>
-    </div>`;
-    quotesList.appendChild(card);
-  });
-
-  if(filtered.length===0) quotesList.innerHTML = '<div class="quiet">No quotes found</div>';
-}
-
-// ---------- Actions ----------
-function sendQuickReply(group, text){
-  // send reply to the latest message id in the group
-  const latest = group.items[0]; // items sorted newest-first earlier
-  if(!latest) return alert('No message to reply to');
-  const payload = { message: text, ts: Date.now(), by: auth.currentUser ? auth.currentUser.email : 'admin' };
-  push(ref(db, `chats/${latest.id}/replies`), payload);
-  // also set status
-  update(ref(db, `chats/${latest.id}`), { status: 'replied', lastReplyAt: Date.now() });
-}
-
-async function sendReplyToGroup(group, text){
-  const latest = group.items[0];
-  if(!latest) return;
-  const payload = { message:text, ts: Date.now(), by: auth.currentUser ? auth.currentUser.email : 'admin' };
-  await push(ref(db, `chats/${latest.id}/replies`), payload);
-  await update(ref(db, `chats/${latest.id}`), { status: 'replied', lastReplyAt: Date.now() });
-}
-
-function markGroupRead(group){
-  group.items.forEach(it=>{
-    update(ref(db, `chats/${it.id}`), { status: 'read' });
-  });
-}
-
-function deleteGroup(group){
-  if(!confirm('Delete all messages for this guest?')) return;
-  group.items.forEach(it=>{
-    remove(ref(db, `chats/${it.id}`));
-  });
-}
-
-window.deleteQuote = function(key){
-  if(!confirm('Delete this quote?')) return;
-  remove(ref(db, `quotes/${key}`));
-};
-
-window.viewQuote = function(key){
-  get(ref(db, `quotes/${key}`)).then(s=>{
-    const v = s.val();
-    if(!v){ alert('Not found'); return; }
-    const txt = `Name: ${v.contact_name||''}\nPhone: ${v.contact_phone||''}\nProduct: ${v.product||''}\nNotes: ${v.notes||''}\n\nFull payload:\n${JSON.stringify(v,null,2)}`;
-    alert(txt);
-  });
-}
-
-// ---------- Reply handler used earlier (delete / push) ----------
-async function sendReplyToMessage(msgId, text){
-  if(!msgId) return;
-  await push(ref(db, `chats/${msgId}/replies`), { message:text, ts: Date.now(), by: auth.currentUser ? auth.currentUser.email : 'admin' });
-  await update(ref(db, `chats/${msgId}`), { status: 'replied', lastReplyAt: Date.now() });
-}
-
-// ---------- Unread badge / notifications ----------
-function updateUnreadBadge(){
-  let totalNew = 0;
-  Object.keys(cacheChats||{}).forEach(k=>{
-    const c = cacheChats[k];
-    if((c.status||'new')==='new') totalNew++;
-  });
-  unreadCount = totalNew;
-  newCountEl.innerText = totalNew;
-  newBadge.style.display = totalNew>0 ? 'inline-block' : 'none';
-  // Play sound if new messages appeared since last render
-  // We'll detect by scanning timestamps per guest
-  // For simplicity: if any message has timestamp > lastSeenTimestamps[guestId] => beep
-  let shouldBeep = false;
-  const guestLatest = {};
-  Object.keys(cacheChats||{}).forEach(k=>{
-    const m = cacheChats[k];
-    const gid = m.guestId || ('g_'+(m.phone||'').slice(-6));
-    guestLatest[gid] = Math.max(guestLatest[gid] || 0, m.timestamp || 0);
-  });
-  Object.keys(guestLatest).forEach(gid=>{
-    if(!lastSeenTimestamps[gid]) {
-      // first time seeing this guest -> only beep if status new
-      const isNew = Object.values(cacheChats||{}).some(x=> (x.guestId||'')===gid && (x.status||'new')==='new');
-      if(isNew) shouldBeep = true;
-    } else if(guestLatest[gid] > lastSeenTimestamps[gid]) {
-      shouldBeep = true;
+        const snapshot = await getDocs(collection(db, "Quotes"));
+        snapshot.forEach(docSnap => {
+            const data = docSnap.data();
+            table.innerHTML += `
+                <tr>
+                    <td>${data.quote}</td>
+                    <td>${data.author}</td>
+                    <td><button onclick="deleteQuote('${docSnap.id}')">Delete</button></td>
+                </tr>
+            `;
+        });
     }
-    lastSeenTimestamps[gid] = guestLatest[gid];
-  });
-  if(shouldBeep && soundEnabled) playBeep();
-}
 
-// ---------- Search / sort / filters ----------
-searchInput.addEventListener('input', ()=> renderChats());
-filterInput.addEventListener('input', ()=> renderChats());
-clearFilter.addEventListener('click', ()=> { filterInput.value=''; renderChats(); });
+    // Delete quote
+    window.deleteQuote = async function(id) {
+        await deleteDoc(doc(db, "Quotes", id));
+        loadQuotes();
+    };
 
-filterQuotes.addEventListener('input', ()=> renderQuotes());
-clearQuotes.addEventListener('click', ()=> { filterQuotes.value=''; renderQuotes(); });
+    // -------------------------
+    // CHAT (Realtime DB)
+    // -------------------------
 
-sortSelect.addEventListener('change', ()=> renderChats());
+    function loadChats() {
+        const chatRef = ref(rtdb, "chats");
 
-// ---------- Helpers ----------
-function escapeHtml(str){
-  if(str===null || str===undefined) return '';
-  return String(str)
-    .replaceAll('&','&amp;')
-    .replaceAll('<','&lt;')
-    .replaceAll('>','&gt;')
-    .replaceAll('"','&quot;')
-    .replaceAll("'",'&#39;');
-}
+        onValue(chatRef, snap => {
+            const table = document.querySelector("#chat-table tbody");
+            table.innerHTML = "";
 
-// ---------- Initial UI setup ----------
-authArea.style.display = 'block';
-dashboard.style.display = 'none';
-newBadge.style.display = 'none';
+            snap.forEach(child => {
+                const id = child.key;
+                const m = child.val();
 
-// Enable live dot blink (simple)
-setInterval(()=>{
-  const d = document.getElementById('liveDot');
-  if(d) d.style.opacity = d.style.opacity==='0'? '1' : '0';
-},800);
+                table.innerHTML += `
+                <tr>
+                    <td>
+                        <strong>${m.name || "Guest"}</strong> <br>
+                        ${m.phone || ""} <br>
+                        <small>${new Date(m.timestamp).toLocaleString()}</small>
+                    </td>
 
+                    <td>${m.message}</td>
+
+                    <td>
+                        <div class="reply-box">
+                            <input id="reply-${id}" placeholder="Reply...">
+                            <button onclick="sendReply('${id}')">Send</button>
+                        </div>
+
+                        ${m.replies ? Object.values(m.replies).map(r => `
+                            <div style='background:#eee;padding:5px;border-radius:5px;margin-top:5px;'>
+                                <strong>GVH:</strong> ${r.message}<br>
+                                <small>${new Date(r.ts).toLocaleString()}</small>
+                            </div>
+                        `).join("") : ""}
+                    </td>
+                </tr>`;
+            });
+        });
+    }
+
+    // Send reply
+    window.sendReply = function(chatId) {
+        const input = document.getElementById("reply-" + chatId);
+        const text = input.value.trim();
+        if (!text) return;
+
+        const replyRef = ref(rtdb, "chats/" + chatId + "/replies");
+
+        const replyObj = {
+            message: text,
+            ts: Date.now(),
+            from: "admin"
+        };
+
+        update(replyRef, { [Date.now()]: replyObj });
+        input.value = "";
+    };
 </script>
+
 </body>
 </html>
