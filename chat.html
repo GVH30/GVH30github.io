@@ -5,6 +5,7 @@
   <title>GVH — Chat Support</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
   <style>
     :root{--bg:#070707;--card:#0f0f10;--gold:#d4af37;--muted:#bfbfbf;--input:#131313}
     body{margin:0;font-family:'Inter',Arial;background:linear-gradient(180deg,#040404,#0b0b0b);color:#eee;padding:22px}
@@ -47,22 +48,21 @@
   <script src="https://www.gstatic.com/firebasejs/9.25.0/firebase-database-compat.js"></script>
 
   <script>
-    // YOUR MAIN PROJECT (same as index.html)
+    /* ✔ CORRECT FIREBASE PROJECT (same as index + admin) */
     const firebaseConfig = {
-      apiKey: "AIzaSyDVcsRaPihq3hoNiEjnIyUgncIL98nJh04",
-      authDomain: "gvh30-40e07.firebaseapp.com",
-      projectId: "gvh30-40e07",
-      storageBucket: "gvh30-40e07.firebasestorage.app",
-      messagingSenderId: "999635428816",
-      appId: "1:999635428816:web:15a48e752b1621c84005d5",
-      measurementId: "G-LZZVS3F9FP",
-      databaseURL: "https://gvh30-40e07-default-rtdb.asia-southeast1.firebasedatabase.app/"
+      apiKey: "AIzaSyBYyc6NM2tw-dOICdGV4qm3MDLxNbROKec",
+      authDomain: "gvh-chat.firebaseapp.com",
+      databaseURL: "https://gvh-chat-default-rtdb.firebaseio.com/",
+      projectId: "gvh-chat",
+      storageBucket: "gvh-chat.firebasestorage.app",
+      messagingSenderId: "861854705186",
+      appId: "1:861854705186:web:d7b3d593451f5295e88c7b"
     };
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // Assign Guest ID
+    /* Assign Guest ID */
     let guestId = localStorage.getItem("gvh_guestId");
     if (!guestId) {
       guestId = "g_" + Math.random().toString(36).substring(2, 10);
@@ -71,18 +71,20 @@
 
     const messagesDiv = document.getElementById("messages");
 
-    function appendBubble(text, cls, meta){
+    function appendBubble(text, cls, meta) {
       const wrap = document.createElement("div");
       wrap.className = "msg " + cls;
+
       const bubble = document.createElement("div");
       bubble.className = "bubble";
       bubble.innerHTML = text + (meta ? `<div style='font-size:12px;color:#bfbfbf;margin-top:6px'>${meta}</div>` : "");
+
       wrap.appendChild(bubble);
       messagesDiv.appendChild(wrap);
       messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
 
-    // Send chat message
+    /* Send message */
     document.getElementById("sendBtn").onclick = () => {
       const name = document.getElementById("name").value.trim() || "Guest";
       const phone = document.getElementById("phone").value.trim();
@@ -109,15 +111,15 @@
       });
     };
 
-    // Load messages only for this guest
+    /* Load messages for this guest only */
     db.ref("chats").orderByChild("guestId").equalTo(guestId).on("value", snap => {
       messagesDiv.innerHTML = "";
 
       snap.forEach(child => {
         const msg = child.val();
+
         appendBubble(msg.message, "guest", new Date(msg.timestamp).toLocaleString());
 
-        // Show admin replies if any
         if (msg.replies) {
           Object.values(msg.replies).forEach(r => {
             appendBubble("GVH: " + r.message, "admin", new Date(r.ts).toLocaleString());
