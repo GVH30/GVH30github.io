@@ -4,230 +4,154 @@
   <meta charset="utf-8" />
   <title>GVH — Get a Freight Quote</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
   <style>
     :root{
       --bg:#070707; --card:#0f0f10; --gold:#d4af37; --muted:#bfbfbf; --input:#131313;
       --radius:12px;
     }
-    *{box-sizing:border-box}
-    body{margin:0;font-family:'Inter',system-ui,Arial;background:linear-gradient(180deg,#040404,#0b0b0b);color:#eee}
-    header{padding:28px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    body{margin:0;font-family:'Inter',Arial;background:linear-gradient(180deg,#040404,#0b0b0b);color:#eee}
+    header{padding:28px 18px;display:flex;align-items:center;justify-content:space-between}
     .brand{display:flex;align-items:center;gap:12px}
-    .brand img{width:56px;height:56px;border-radius:10px;object-fit:cover}
-    .brand h1{margin:0;color:var(--gold);font-size:20px}
+    .brand img{width:56px;height:56px;border-radius:10px}
+    .title{font-size:32px;margin:0;color:#fff}
     .container{max-width:1200px;margin:18px auto;padding:22px}
-    .hero{display:grid;grid-template-columns:1fr 480px;gap:22px;align-items:start}
-    .left{padding:28px;border-radius:var(--radius);background:transparent}
-    .eyebrow{color:var(--muted);font-size:13px;margin-bottom:10px}
-    .title{font-size:32px;margin:0 0 12px 0;color:#fff}
-    .lead{color:var(--muted);max-width:64ch;line-height:1.5}
-    .right{background:var(--card);border-radius:var(--radius);padding:20px;border:1px solid rgba(212,175,55,0.06);box-shadow:0 10px 30px rgba(0,0,0,0.6)}
-    form{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-    label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px}
-    input,select,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:var(--input);color:#fff;font-size:14px}
-    textarea{min-height:90px;resize:vertical}
-    .full{grid-column:1 / -1}
-    .actions{display:flex;gap:10px;align-items:center;grid-column:1 / -1;margin-top:8px}
-    .btn{background:var(--gold);border:none;padding:12px 16px;border-radius:10px;color:#051018;font-weight:700;cursor:pointer}
-    .secondary{background:transparent;border:1px solid rgba(255,255,255,0.03);color:var(--muted)}
-    .small{font-size:13px;color:var(--muted)}
-    .success{display:none;padding:12px;border-radius:8px;background:#0b3b20;color:#dff7e6;margin-top:12px}
-    footer{padding:18px;color:var(--muted);text-align:center;font-size:13px}
-    @media(max-width:980px){.hero{grid-template-columns:1fr}.right{order:2}}
+    .right{background:var(--card);padding:20px;border-radius:var(--radius);border:1px solid rgba(212,175,55,0.1)}
+    input,select,textarea{
+      width:100%;padding:10px;margin-top:5px;border-radius:8px;
+      background:var(--input);border:1px solid rgba(255,255,255,0.1);color:#fff;
+    }
+    .btn{background:var(--gold);padding:12px;border:none;border-radius:10px;font-weight:700;cursor:pointer}
+    .success{display:none;background:#0b3b20;color:#dff7e6;padding:12px;margin-top:10px;border-radius:8px}
   </style>
 </head>
+
 <body>
-  <header>
-    <div class="brand">
-      <img src="logo.png" alt="GVH logo">
-      <div><h1>Global Voyages & Hospitality</h1><div class="small">Freight & Courier — Domestic & International</div></div>
-    </div>
-    <nav>
-      <a href="chat.html" style="color:var(--muted);text-decoration:none;margin-right:12px">Chat</a>
-      <a href="admin.html" style="color:var(--muted);text-decoration:none">Admin</a>
-    </nav>
-  </header>
 
-  <div class="container">
-    <div class="hero">
-      <div class="left">
-        <div class="eyebrow">Fast — Transparent — Reliable</div>
-        <h2 class="title">Get a professional freight quote in minutes</h2>
-        <p class="lead">Tell us about your shipment — air, sea, road or rail. Provide dimensions, weight and pickup/delivery details and our team will contact you with competitive rates and transit options.</p>
-        <div style="margin-top:18px" class="small">Call: <strong>9547508342</strong> • Email: <strong>info@gvh.example</strong></div>
-      </div>
-
-      <div class="right">
-        <div style="font-weight:700;font-size:16px;color:var(--gold);margin-bottom:10px">Request a Quote</div>
-
-        <form id="quoteForm">
-          
-          <div class="full">
-            <label>Select Courier Partner *</label>
-            <select id="select_courier_partner" required>
-              <option value="">Choose partner</option>
-              <option>Blue Dart</option>
-              <option>DTDC</option>
-              <option>Delhivery</option>
-            </select>
-          </div>
-
-          <div class="full">
-            <label>Shipping Mode *</label>
-            <select id="shipping_mode" required>
-              <option value="">Choose mode</option>
-              <option>Domestic Express Courier</option>
-              <option>Less Than Truckload (LTL)</option>
-              <option>Full Truckload (FTL)</option>
-              <option>Integrated E-Commerce Logistics Solutions</option>
-              <option>International Courier & Cargo</option>
-              <option>Air Freight</option>
-              <option>Sea Freight (LCL)</option>
-              <option>Road Freight</option>
-            </select>
-          </div>
-
-          <div>
-            <label>Origin Pincode *</label>
-            <input id="origin_pincode" required>
-          </div>
-
-          <div>
-            <label>Destination Pincode *</label>
-            <input id="destination_pincode" required>
-          </div>
-
-          <div>
-            <label>Arrival Date</label>
-            <input type="date" id="arrival_date">
-          </div>
-
-          <div class="full">
-            <label>Product Description *</label>
-            <input id="product" required>
-          </div>
-
-          <div>
-            <label>Packing Type</label>
-            <select id="packing_type">
-              <option>Container</option>
-              <option>Crate</option>
-              <option>Box</option>
-            </select>
-          </div>
-
-          <div>
-            <label>Quantity</label>
-            <input type="number" id="quantity" min="1" value="1">
-          </div>
-
-          <div>
-            <label>Weight</label>
-            <div style="display:flex;gap:8px">
-              <input type="number" id="weight" min="0" step="0.01">
-              <select id="weight_unit"><option>KG</option><option>LBS</option><option>TON</option></select>
-            </div>
-          </div>
-
-          <div class="full">
-            <label>Dimensions (L × W × H)</label>
-            <div style="display:flex;gap:8px">
-              <input type="number" id="length" min="0" step="0.1" placeholder="L">
-              <input type="number" id="width" min="0" step="0.1" placeholder="W">
-              <input type="number" id="height" min="0" step="0.1" placeholder="H">
-              <select id="dim_unit"><option>CM</option><option>IN</option></select>
-            </div>
-          </div>
-
-          <div class="full">
-            <label>Contact Name *</label>
-            <input id="contact_name" required>
-          </div>
-
-          <div>
-            <label>Phone *</label>
-            <input id="contact_phone" required>
-          </div>
-
-          <div>
-            <label>Email</label>
-            <input id="contact_email">
-          </div>
-
-          <div class="full">
-            <label>Other notes</label>
-            <textarea id="notes"></textarea>
-          </div>
-
-          <div class="actions full">
-            <button type="button" id="submitBtn" class="btn">Request Quote</button>
-            <button type="button" class="secondary" onclick="location.href='chat.html'">Ask via Chat</button>
-          </div>
-        </form>
-
-        <div id="success" class="success">Your request has been sent!</div>
-      </div>
+<header>
+  <div class="brand">
+    <img src="logo.png" />
+    <div>
+      <h1 style="color:var(--gold);margin:0;">Global Voyages & Hospitality</h1>
+      <div style="color:var(--muted);font-size:13px">Freight & Courier Services</div>
     </div>
   </div>
+  <nav>
+    <a href="chat.html" style="color:var(--muted);margin-right:18px;text-decoration:none">Chat</a>
+    <a href="admin.html" style="color:var(--muted);text-decoration:none">Admin</a>
+  </nav>
+</header>
 
-  <footer>Vill & P.O. Fatepur • Falta • South 24 Parganas, WB • PIN 743515 — Call: 9547508342</footer>
+<div class="container">
+  <div class="right">
 
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.25.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.25.0/firebase-database-compat.js"></script>
+    <h2 style="color:var(--gold);margin-top:0;">Request a Quote</h2>
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDVcsRaPihq3hoNiEjnIyUgncIL98nJh04",
-      authDomain: "gvh30-40e07.firebaseapp.com",
-      projectId: "gvh30-40e07",
-      storageBucket: "gvh30-40e07.firebasestorage.app",
-      messagingSenderId: "999635428816",
-      appId: "1:999635428816:web:15a48e752b1621c84005d5",
-      measurementId: "G-LZZVS3F9FP",
-      databaseURL: "https://gvh30-40e07-default-rtdb.asia-southeast1.firebasedatabase.app/"
-    };
+    <form id="quoteForm">
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+      <label>Courier Partner</label>
+      <select id="select_courier_partner" required>
+        <option value="">Choose</option>
+        <option>Blue Dart</option>
+        <option>DTDC</option>
+        <option>Delhivery</option>
+      </select>
 
-    document.getElementById("submitBtn").addEventListener("click", () => {
+      <label>Shipping Mode</label>
+      <select id="shipping_mode" required>
+        <option value="">Choose</option>
+        <option>Domestic Express</option>
+        <option>Air Freight</option>
+        <option>Sea Freight</option>
+        <option>Road Freight</option>
+        <option>International Courier</option>
+      </select>
 
-      const data = {
-        courier_partner: document.getElementById("select_courier_partner").value,
-        shipping_mode: document.getElementById("shipping_mode").value,
-        origin_pincode: document.getElementById("origin_pincode").value,
-        destination_pincode: document.getElementById("destination_pincode").value,
-        arrival_date: document.getElementById("arrival_date").value || null,
-        product: document.getElementById("product").value,
-        packing_type: document.getElementById("packing_type").value,
-        quantity: Number(document.getElementById("quantity").value) || 0,
-        weight: Number(document.getElementById("weight").value) || 0,
-        weight_unit: document.getElementById("weight_unit").value,
-        length: Number(document.getElementById("length").value) || 0,
-        width: Number(document.getElementById("width").value) || 0,
-        height: Number(document.getElementById("height").value) || 0,
-        dim_unit: document.getElementById("dim_unit").value,
-        contact_name: document.getElementById("contact_name").value,
-        contact_phone: document.getElementById("contact_phone").value,
-        contact_email: document.getElementById("contact_email").value,
-        notes: document.getElementById("notes").value,
-        status: "New",
-        ts: Date.now()
-      };
+      <label>Origin Pincode</label>
+      <input id="origin_pincode" required>
 
-      if (!data.courier_partner || !data.shipping_mode || !data.origin_pincode ||
-          !data.destination_pincode || !data.product || !data.contact_name || !data.contact_phone) {
-        return alert("Please fill all required fields.");
-      }
+      <label>Destination Pincode</label>
+      <input id="destination_pincode" required>
 
-      db.ref("quotes").push(data).then(() => {
-        document.getElementById("success").style.display = "block";
-        document.getElementById("quoteForm").reset();
-        setTimeout(() => document.getElementById("success").style.display = "none", 4000);
-      });
-    });
-  </script>
+      <label>Product Description</label>
+      <input id="product" required>
+
+      <label>Weight (kg)</label>
+      <input id="weight" type="number" required>
+
+      <label>Dimensions (cm) L × W × H</label>
+      <div style="display:flex;gap:10px">
+        <input id="length" type="number" placeholder="L">
+        <input id="width" type="number" placeholder="W">
+        <input id="height" type="number" placeholder="H">
+      </div>
+
+      <label>Contact Name</label>
+      <input id="contact_name" required>
+
+      <label>Phone</label>
+      <input id="contact_phone" required>
+
+      <label>Email (optional)</label>
+      <input id="contact_email">
+
+      <button type="button" id="submitBtn" class="btn" style="margin-top:15px">Submit Quote</button>
+    </form>
+
+    <div id="success" class="success">Quote submitted successfully!</div>
+
+  </div>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.25.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.25.0/firebase-database-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyBYyc6NM2tw-dOICdGV4qm3MDLxNbROKec",
+  authDomain: "gvh-chat.firebaseapp.com",
+  databaseURL: "https://gvh-chat-default-rtdb.firebaseio.com/",
+  projectId: "gvh-chat",
+  storageBucket: "gvh-chat.firebasestorage.app",
+  messagingSenderId: "861854705186",
+  appId: "1:861854705186:web:d7b3d593451f5295e88c7b"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+document.getElementById('submitBtn').onclick = () => {
+  const payload = {
+    courier: select_courier_partner.value,
+    mode: shipping_mode.value,
+    origin: origin_pincode.value,
+    destination: destination_pincode.value,
+    product: product.value,
+    weight: weight.value,
+    length: length.value,
+    width: width.value,
+    height: height.value,
+    name: contact_name.value,
+    phone: contact_phone.value,
+    email: contact_email.value,
+    ts: Date.now()
+  };
+
+  if (!payload.courier || !payload.mode || !payload.origin || !payload.destination || !payload.product || !payload.name || !payload.phone) {
+    return alert("Please fill all required fields.");
+  }
+
+  db.ref("quotes").push(payload).then(() => {
+    document.getElementById("success").style.display = "block";
+    document.getElementById("quoteForm").reset();
+    setTimeout(() => {
+      document.getElementById("success").style.display = "none";
+    }, 3000);
+  });
+};
+</script>
+
 </body>
 </html>
