@@ -2,156 +2,144 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>GVH — Get a Freight Quote</title>
+  <title>GVH Logistics</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      --bg:#070707; --card:#0f0f10; --gold:#d4af37; --muted:#bfbfbf; --input:#131313;
-      --radius:12px;
+      --bg:#070707;
+      --card:#0f0f10;
+      --gold:#d4af37;
+      --muted:#bfbfbf;
+      --input:#131313;
     }
-    body{margin:0;font-family:'Inter',Arial;background:linear-gradient(180deg,#040404,#0b0b0b);color:#eee}
-    header{padding:28px 18px;display:flex;align-items:center;justify-content:space-between}
-    .brand{display:flex;align-items:center;gap:12px}
-    .brand img{width:56px;height:56px;border-radius:10px}
-    .title{font-size:32px;margin:0;color:#fff}
-    .container{max-width:1200px;margin:18px auto;padding:22px}
-    .right{background:var(--card);padding:20px;border-radius:var(--radius);border:1px solid rgba(212,175,55,0.1)}
-    input,select,textarea{
-      width:100%;padding:10px;margin-top:5px;border-radius:8px;
-      background:var(--input);border:1px solid rgba(255,255,255,0.1);color:#fff;
+    body{
+      margin:0;
+      font-family:'Inter',Arial;
+      background:linear-gradient(180deg,#040404,#0b0b0b);
+      color:#eee;
+      padding:22px;
     }
-    .btn{background:var(--gold);padding:12px;border:none;border-radius:10px;font-weight:700;cursor:pointer}
-    .success{display:none;background:#0b3b20;color:#dff7e6;padding:12px;margin-top:10px;border-radius:8px}
+    .wrap{
+      max-width:640px;
+      margin:0 auto;
+    }
+    .card{
+      background:var(--card);
+      padding:20px;
+      border-radius:12px;
+      border:1px solid rgba(212,175,55,0.06);
+      box-shadow:0 10px 30px rgba(0,0,0,0.6);
+    }
+    h1{
+      margin:0;
+      color:var(--gold);
+      font-size:28px;
+      text-align:center;
+    }
+    .quoteBox{
+      color:var(--gold);
+      text-align:center;
+      margin-top:16px;
+      font-size:17px;
+      font-weight:600;
+      min-height:28px;
+      transition:opacity .6s;
+      opacity:1;
+    }
+    .form-row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:14px;
+    }
+    input,textarea{
+      width:100%;
+      padding:10px;
+      border-radius:8px;
+      border:1px solid rgba(255,255,255,0.07);
+      background:var(--input);
+      color:#fff;
+      margin-top:10px;
+    }
+    button{
+      background:var(--gold);
+      border:none;
+      padding:12px 14px;
+      border-radius:8px;
+      color:#051018;
+      font-weight:700;
+      cursor:pointer;
+      margin-top:14px;
+      width:100%;
+      font-size:16px;
+    }
+    .note{
+      text-align:center;
+      color:var(--muted);
+      margin-top:16px;
+      font-size:14px;
+    }
   </style>
 </head>
 
 <body>
+  <div class="wrap">
+    <div class="card">
 
-<header>
-  <div class="brand">
-    <img src="logo.png" />
-    <div>
-      <h1 style="color:var(--gold);margin:0;">Global Voyages & Hospitality</h1>
-      <div style="color:var(--muted);font-size:13px">Freight & Courier Services</div>
-    </div>
-  </div>
-  <nav>
-    <a href="chat.html" style="color:var(--muted);margin-right:18px;text-decoration:none">Chat</a>
-    <a href="admin.html" style="color:var(--muted);text-decoration:none">Admin</a>
-  </nav>
-</header>
+      <h1>GVH Logistics</h1>
 
-<div class="container">
-  <div class="right">
+      <!-- ROTATING QUOTES -->
+      <div id="quoteBox" class="quoteBox"></div>
 
-    <h2 style="color:var(--gold);margin-top:0;">Request a Quote</h2>
-
-    <form id="quoteForm">
-
-      <label>Courier Partner</label>
-      <select id="select_courier_partner" required>
-        <option value="">Choose</option>
-        <option>Blue Dart</option>
-        <option>DTDC</option>
-        <option>Delhivery</option>
-      </select>
-
-      <label>Shipping Mode</label>
-      <select id="shipping_mode" required>
-        <option value="">Choose</option>
-        <option>Domestic Express</option>
-        <option>Air Freight</option>
-        <option>Sea Freight</option>
-        <option>Road Freight</option>
-        <option>International Courier</option>
-      </select>
-
-      <label>Origin Pincode</label>
-      <input id="origin_pincode" required>
-
-      <label>Destination Pincode</label>
-      <input id="destination_pincode" required>
-
-      <label>Product Description</label>
-      <input id="product" required>
-
-      <label>Weight (kg)</label>
-      <input id="weight" type="number" required>
-
-      <label>Dimensions (cm) L × W × H</label>
-      <div style="display:flex;gap:10px">
-        <input id="length" type="number" placeholder="L">
-        <input id="width" type="number" placeholder="W">
-        <input id="height" type="number" placeholder="H">
+      <!-- FORM -->
+      <div class="form-row">
+        <input id="name" placeholder="Your Name">
+        <input id="phone" placeholder="Phone Number">
       </div>
 
-      <label>Contact Name</label>
-      <input id="contact_name" required>
+      <input id="pickup" placeholder="Pickup Area">
+      <input id="destination" placeholder="Destination">
 
-      <label>Phone</label>
-      <input id="contact_phone" required>
+      <textarea id="details" rows="3" placeholder="Parcel Details..."></textarea>
 
-      <label>Email (optional)</label>
-      <input id="contact_email">
+      <button onclick="alert('Message Sent! (Demo Only)')">Get Quote</button>
 
-      <button type="button" id="submitBtn" class="btn" style="margin-top:15px">Submit Quote</button>
-    </form>
-
-    <div id="success" class="success">Quote submitted successfully!</div>
-
+      <div class="note">Call us: <strong>9547508342</strong></div>
+    </div>
   </div>
-</div>
 
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/9.25.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.25.0/firebase-database-compat.js"></script>
+  <!-- QUOTES SCRIPT -->
+  <script>
+    const quotes = [
+      "Fast, safe & secure delivery — every time.",
+      "Your parcel, delivered with care.",
+      "We pick up from your door and deliver to theirs.",
+      "Reliable delivery across Kerala & Tamil Nadu.",
+      "Affordable rates — premium service.",
+      "Track your parcel anytime, anywhere.",
+      "Express pickup available — call us now.",
+      "Trusted by businesses & individuals daily.",
+      "Your delivery is our responsibility.",
+      "GVH Logistics — moving your world forward."
+    ];
 
-<script>
-const firebaseConfig = {
-  apiKey: "AIzaSyBYyc6NM2tw-dOICdGV4qm3MDLxNbROKec",
-  authDomain: "gvh-chat.firebaseapp.com",
-  databaseURL: "https://gvh-chat-default-rtdb.firebaseio.com/",
-  projectId: "gvh-chat",
-  storageBucket: "gvh-chat.firebasestorage.app",
-  messagingSenderId: "861854705186",
-  appId: "1:861854705186:web:d7b3d593451f5295e88c7b"
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+    let i = 0;
+    const box = document.getElementById("quoteBox");
 
-document.getElementById('submitBtn').onclick = () => {
-  const payload = {
-    courier: select_courier_partner.value,
-    mode: shipping_mode.value,
-    origin: origin_pincode.value,
-    destination: destination_pincode.value,
-    product: product.value,
-    weight: weight.value,
-    length: length.value,
-    width: width.value,
-    height: height.value,
-    name: contact_name.value,
-    phone: contact_phone.value,
-    email: contact_email.value,
-    ts: Date.now()
-  };
+    function rotateQuotes() {
+      box.style.opacity = 0;
+      setTimeout(() => {
+        box.innerText = quotes[i];
+        box.style.opacity = 1;
+        i = (i + 1) % quotes.length;
+      }, 600);
+    }
 
-  if (!payload.courier || !payload.mode || !payload.origin || !payload.destination || !payload.product || !payload.name || !payload.phone) {
-    return alert("Please fill all required fields.");
-  }
-
-  db.ref("quotes").push(payload).then(() => {
-    document.getElementById("success").style.display = "block";
-    document.getElementById("quoteForm").reset();
-    setTimeout(() => {
-      document.getElementById("success").style.display = "none";
-    }, 3000);
-  });
-};
-</script>
+    rotateQuotes();
+    setInterval(rotateQuotes, 5000);
+  </script>
 
 </body>
 </html>
