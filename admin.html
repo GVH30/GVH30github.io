@@ -1,265 +1,182 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>GVH Admin — Quotes & Chats</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root{--bg:#070707;--card:#0f0f10;--gold:#d4af37;--muted:#bfbfbf;--input:#131313}
-    body{margin:0;font-family:'Inter',Arial;background:linear-gradient(180deg,#030303,#0b0b0b);color:#eee;padding:18px}
-    .wrap{max-width:1200px;margin:0 auto}
-    header{display:flex;justify-content:space-between;align-items:center}
-    h1{margin:0;color:var(--gold)}
-    .small{color:var(--muted)}
-    .card{background:var(--card);padding:14px;border-radius:10px;border:1px solid rgba(212,175,55,0.06);box-shadow:0 10px 30px rgba(0,0,0,0.6)}
-    input,textarea,select,button{font-family:'Inter'}
-    input,textarea,select{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:var(--input);color:#fff;margin-top:8px}
-    button{background:var(--gold);border:none;padding:10px 12px;border-radius:8px;color:#051018;font-weight:700;cursor:pointer;margin-top:10px}
-    .panel{display:grid;grid-template-columns:360px 1fr;gap:16px;margin-top:16px}
-    .list{max-height:74vh;overflow:auto}
-    .item{padding:10px;border-bottom:1px solid rgba(255,255,255,0.03);cursor:pointer}
-    .item.new{border-left:4px solid var(--gold)}
-    .detail{max-height:74vh;overflow:auto;padding:12px}
-    .tabs{display:flex;gap:8px}
-    .tab{padding:8px 12px;border-radius:8px;background:#0b0b0b;cursor:pointer}
-    .tab.active{background:var(--gold);color:#051018}
-    .actions{display:flex;gap:8px;margin-top:8px}
-    .note-block{background:#0b0b0b;padding:8px;border-radius:8px;margin-top:8px}
-    @media(max-width:900px){.panel{grid-template-columns:1fr}}
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin Panel</title>
+
+<style>
+    body {
+        font-family: Arial;
+        background: #f4f4f4;
+        margin: 0;
+        padding: 0;
+    }
+    .login-box, .panel {
+        width: 400px;
+        background: white;
+        padding: 25px;
+        margin: 50px auto;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    input {
+        width: 100%;
+        padding: 10px;
+        margin: 8px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    button {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        background: #2196f3;
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    #panel-content { display: none; }
+    table {
+        width: 100%;
+        margin-top: 15px;
+        border-collapse: collapse;
+    }
+    th, td {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+    }
+</style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <div>
-        <h1>GVH Admin</h1>
-        <div class="small">Manage Quotes & Chats</div>
-      </div>
-      <div>
-        <div class="small">Signed in as: <span id="who">-</span></div>
-        <button id="logoutBtn" style="display:none;background:#c23a3a;color:#fff">Logout</button>
-      </div>
-    </header>
 
-   <div id="loginBox" class="card" style="max-width:440px;margin-top:14px">
-  <div style="font-weight:700">Admin Login</div>
-
-  <input id="email" type="email" placeholder="Email">
-  <input id="password" type="password" placeholder="Password">
-
-  <button id="loginBtn">Login</button>
-  <div id="loginMsg" class="small" style="margin-top:8px"></div>
+<!-- LOGIN SCREEN -->
+<div id="login-box" class="login-box">
+    <h2>Admin Login</h2>
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
+    <button id="login-btn">Login</button>
+    <p id="login-error" style="color:red;"></p>
 </div>
 
+<!-- ADMIN PANEL -->
+<div id="panel-content" class="panel">
+    <h2>Admin Dashboard</h2>
+    <button id="logout-btn" style="background:#f44336;margin-bottom:15px;">Logout</button>
 
-    <div id="app" style="display:none">
-      <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div style="font-weight:700">Dashboard</div>
-          <div class="tabs">
-            <div id="tabQuotes" class="tab active">Quotes</div>
-            <div id="tabChats" class="tab">Chats</div>
-            <button id="exportBtn" style="margin-left:10px">Export All</button>
-          </div>
-        </div>
+    <h3>Quotes</h3>
+    <table id="quotes-table">
+        <thead><tr><th>Quote</th><th>Author</th></tr></thead>
+        <tbody></tbody>
+    </table>
 
-        <div class="panel" style="margin-top:12px">
-          <div class="card list" id="leftCol">
-            <div style="font-weight:700;margin-bottom:8px" id="listTitle">Quote Requests</div>
-            <div id="itemsList"></div>
-          </div>
+    <h3>Chat Messages</h3>
+    <table id="chat-table">
+        <thead><tr><th>User</th><th>Message</th></tr></thead>
+        <tbody></tbody>
+    </table>
+</div>
 
-          <div class="card detail" id="rightCol">
-            <div id="detailHeader" style="font-weight:700">Select an item</div>
-            <div id="detailBody" style="margin-top:10px"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+<!-- FIREBASE MODULES -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { 
+        getAuth, 
+        signInWithEmailAndPassword, 
+        onAuthStateChanged, 
+        signOut 
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.25.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.25.0/firebase-database-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.25.0/firebase-auth-compat.js"></script>
+    import { 
+        getFirestore, 
+        collection, 
+        getDocs 
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-  <script>
+    // --- YOUR FIREBASE CONFIG ---
     const firebaseConfig = {
-      apiKey: "AIzaSyBYyc6NM2tw-dOICdGV4qm3MDLxNbROKec",
-      authDomain: "gvh-chat.firebaseapp.com",
-      databaseURL: "https://gvh-chat-default-rtdb.firebaseio.com/",
-      projectId: "gvh-chat",
-      storageBucket: "gvh-chat.firebasestorage.app",
-      messagingSenderId: "861854705186",
-      appId: "1:861854705186:web:d7b3d593451f5295e88c7b"
+        apiKey: "AIzaSyDVcsRaPihq3hoNiEjnIyUgncIL98nJh04",
+        authDomain: "gvh30-40e07.firebaseapp.com",
+        projectId: "gvh30-40e07",
+        storageBucket: "gvh30-40e07.firebasestorage.app",
+        messagingSenderId: "999635428816",
+        appId: "1:999635428816:web:15a48e752b1621c84005d5",
+        measurementId: "G-LZZVS3F9FP"
     };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    const auth = firebase.auth();
 
-    // UI refs
-    const loginBox = document.getElementById('loginBox');
-    const loginMsg = document.getElementById('loginMsg');
-    const emailIn = document.getElementById('email');
-    const passIn = document.getElementById('password');
-    const loginBtn = document.getElementById('loginBtn');
-    const logoutBtn = document.getElementById('logoutBtn');
-    const whoSpan = document.getElementById('who');
+    // INIT
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-    const appDiv = document.getElementById('app');
-    const tabQuotes = document.getElementById('tabQuotes');
-    const tabChats = document.getElementById('tabChats');
-    const listTitle = document.getElementById('listTitle');
-    const itemsList = document.getElementById('itemsList');
-    const detailHeader = document.getElementById('detailHeader');
-    const detailBody = document.getElementById('detailBody');
-    const exportBtn = document.getElementById('exportBtn');
+    const loginBox = document.getElementById("login-box");
+    const panelContent = document.getElementById("panel-content");
 
-    let currentTab = 'quotes';
-    let cache = { quotes: {}, chats: {} };
-    let selectedKey = null;
+    // --- LOGIN BUTTON ---
+    document.getElementById("login-btn").addEventListener("click", async () => {
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value.trim();
+        const errorBox = document.getElementById("login-error");
 
-    // Auth handlers
-    loginBtn.onclick = ()=> {
-      const e = emailIn.value.trim(), p = passIn.value.trim();
-      if(!e||!p){ loginMsg.innerText='Enter email & password'; return; }
-      loginMsg.innerText='Signing in...';
-      auth.signInWithEmailAndPassword(e,p).then(()=>loginMsg.innerText='Login successful!').catch(err=>loginMsg.innerText=err.message);
-    };
-    logoutBtn.onclick = ()=> auth.signOut();
-
-    auth.onAuthStateChanged(user=>{
-      if(user){
-        loginBox.style.display='none';
-        appDiv.style.display='block';
-        logoutBtn.style.display='inline-block';
-        whoSpan.innerText = user.email;
-        startListening();
-      } else {
-        loginBox.style.display='block';
-        appDiv.style.display='none';
-        logoutBtn.style.display='none';
-        whoSpan.innerText = '-';
-      }
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+        } catch (err) {
+            errorBox.innerText = "Invalid login. Try again.";
+        }
     });
 
-    // Tabs
-    tabQuotes.onclick = ()=> { currentTab='quotes'; tabQuotes.classList.add('active'); tabChats.classList.remove('active'); listTitle.innerText='Quote Requests'; renderList(); }
-    tabChats.onclick = ()=> { currentTab='chats'; tabChats.classList.add('active'); tabQuotes.classList.remove('active'); listTitle.innerText='Chats'; renderList(); }
-
-    function startListening(){
-      db.ref('quotes').on('value', snap=>{ cache.quotes = snap.val()||{}; if(currentTab==='quotes') renderList(); });
-      db.ref('chats').on('value', snap=>{ cache.chats = snap.val()||{}; if(currentTab==='chats') renderList(); });
-    }
-
-    function renderList(){
-      itemsList.innerHTML=''; selectedKey=null; detailHeader.innerText='Select an item'; detailBody.innerHTML='';
-      const source = currentTab==='quotes' ? cache.quotes : cache.chats;
-      const keys = Object.keys(source).sort((a,b)=> (source[b].ts||source[b].timestamp||0) - (source[a].ts||source[a].timestamp||0));
-      if(keys.length===0){ itemsList.innerHTML='<div class="small">No items</div>'; return; }
-      keys.forEach(k=>{
-        const v = source[k];
-        const div = document.createElement('div');
-        div.className = 'item ' + ((v.status || '').toLowerCase()==='new' ? 'new' : '');
-        const title = currentTab==='quotes' ? (v.contact_name||'') : (v.name||'Guest');
-        const meta = currentTab==='quotes' ? (v.shipping_mode||'') : (v.phone||'');
-        const ts = new Date(v.ts||v.timestamp||0).toLocaleString();
-        div.innerHTML = `<div style="display:flex;justify-content:space-between"><div><strong>${title}</strong><div class="small">${meta}</div></div><div class="small">${ts}</div></div><div class="small" style="margin-top:6px">${(currentTab==='quotes' ? (v.cargo||'') : (v.message||'')).slice(0,140)}</div>`;
-        div.onclick = ()=> openDetail(k);
-        itemsList.appendChild(div);
-      });
-    }
-
-    function openDetail(key){
-      selectedKey = key;
-      const v = currentTab==='quotes' ? cache.quotes[key] : cache.chats[key];
-      if(!v) return;
-      detailHeader.innerText = currentTab==='quotes' ? (v.contact_name||'Quote') : (v.name||'Chat');
-      let html = '';
-      if(currentTab==='quotes'){
-        html += `<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><div><strong>Mode</strong><div class="small">${v.shipping_mode||''}</div></div><div><strong>Incoterms</strong><div class="small">${v.incoterms||''}</div></div></div>`;
-        html += `<div style="margin-top:8px"><strong>From</strong><div class="small">${v.departure_country||''} • ${v.departure_district||''} • ${v.departure_type||''}</div></div>`;
-        html += `<div style="margin-top:8px"><strong>To</strong><div class="small">${v.arrival_country||''} • ${v.arrival_district||''} • ${v.arrival_type||''}</div></div>`;
-        html += `<div style="margin-top:8px"><strong>Cargo</strong><div class="small">${v.cargo||''}</div></div>`;
-        html += `<div style="margin-top:8px" class="row"><div><strong>Qty</strong><div class="small">${v.quantity||''}</div></div><div><strong>Weight</strong><div class="small">${v.weight||''} ${v.weight_unit||''}</div></div></div>`;
-        html += `<div style="margin-top:8px"><strong>Dimensions</strong><div class="small">L:${v.length||0} × W:${v.width||0} × H:${v.height||0} ${v.dim_unit||''}</div></div>`;
-        html += `<div style="margin-top:8px"><strong>Contact</strong><div class="small">${v.contact_name||''} • ${v.contact_phone||''} • ${v.contact_email||''}</div></div>`;
-        html += `<div style="margin-top:8px"><strong>Notes</strong><div class="small">${v.notes||''}</div></div>`;
-        html += `<div style="margin-top:12px"><label>Update status</label><select id="statusSelect"><option>New</option><option>Reviewed</option><option>Quoted</option><option>Completed</option></select></div>`;
-        html += `<div style="margin-top:8px"><label>Internal notes</label><textarea id="internalNote" placeholder="Add internal note"></textarea><div class="actions"><button id="saveNote">Save Note</button><button id="saveStatus">Save Status</button></div></div>`;
-      } else {
-        html += `<div style="margin-top:6px"><strong>From</strong><div class="small">${v.name||''} • ${v.phone||''}</div></div>`;
-        html += `<div style="margin-top:8px"><strong>Pickup</strong><div class="small">${v.pickup||''}</div></div>`;
-        html += `<div style="margin-top:8px"><strong>Destination</strong><div class="small">${v.dest||''}</div></div>`;
-        html += `<div style="margin-top:8px"><strong>Message</strong><div class="small">${v.message||''}</div></div>`;
-        html += `<div style="margin-top:12px"><div style="font-weight:700">Conversation</div><div id="convArea" style="margin-top:8px"></div></div>`;
-        html += `<div style="margin-top:10px"><textarea id="replyText" placeholder="Type reply to customer"></textarea><div class="actions"><button id="sendReplyBtn">Send Reply</button></div></div>`;
-      }
-      detailBody.innerHTML = html;
-
-      if(currentTab==='quotes'){
-        const statusSelect = document.getElementById('statusSelect');
-        statusSelect.value = v.status || 'New';
-        document.getElementById('saveStatus').onclick = ()=>{
-          const s = statusSelect.value;
-          db.ref('quotes/'+key+'/status').set(s).then(()=> alert('Status updated')).catch(e=>alert(e.message));
-        };
-        document.getElementById('saveNote').onclick = ()=>{
-          const note = document.getElementById('internalNote').value.trim();
-          if(!note) return alert('Type a note');
-          const nRef = db.ref('quotes/'+key+'/internalNotes').push();
-          nRef.set({ note, by: auth.currentUser.email, ts: Date.now() }).then(()=> alert('Note saved')).catch(e=>alert(e.message));
-        };
-      } else {
-        const conv = document.getElementById('convArea');
-        conv.innerHTML = '';
-        if(v.timestamp) {
-          const b = document.createElement('div'); b.style.marginBottom='8px';
-          b.innerHTML = `<div class="small">Customer at ${new Date(v.timestamp).toLocaleString()}</div><div style="padding:8px;background:#081721;border-radius:8px;margin-top:6px">${v.message||''}</div>`;
-          conv.appendChild(b);
+    // --- AUTH PROTECTION ---
+    onAuthStateChanged(auth, user => {
+        if (user) {
+            loginBox.style.display = "none";
+            panelContent.style.display = "block";
+            loadQuotes();
+            loadChat();
+        } else {
+            loginBox.style.display = "block";
+            panelContent.style.display = "none";
         }
-        if(v.replies) Object.values(v.replies).forEach(r=>{
-          const b = document.createElement('div'); b.style.marginBottom='8px';
-          b.innerHTML = `<div class="small">Admin at ${new Date(r.ts).toLocaleString()}</div><div style="padding:8px;background:var(--gold);color:#051018;border-radius:8px;margin-top:6px">${r.message||''}</div>`;
-          conv.appendChild(b);
+    });
+
+    // --- LOGOUT ---
+    document.getElementById("logout-btn").addEventListener("click", () => {
+        signOut(auth);
+    });
+
+    // --- LOAD QUOTES ---
+    async function loadQuotes() {
+        const table = document.querySelector("#quotes-table tbody");
+        table.innerHTML = "";
+
+        const snapshot = await getDocs(collection(db, "Quotes"));
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            table.innerHTML += `
+                <tr>
+                    <td>${data.quote}</td>
+                    <td>${data.author}</td>
+                </tr>
+            `;
         });
-        document.getElementById('sendReplyBtn').onclick = ()=>{
-          const text = document.getElementById('replyText').value.trim();
-          if(!text) return alert('Type a reply');
-          const payload = { message:text, ts:Date.now(), by: auth.currentUser.email || 'admin' };
-          const newKey = db.ref('chats/'+key+'/replies').push().key;
-          const updates = {};
-          updates['chats/'+key+'/replies/'+newKey] = payload;
-          updates['chats/'+key+'/status'] = 'replied';
-          updates['chats/'+key+'/lastReplyAt'] = Date.now();
-          db.ref().update(updates).then(()=> { alert('Reply sent'); document.getElementById('replyText').value=''; })
-            .catch(e=>alert(e.message));
-        };
-        db.ref('chats/'+key+'/status').set('read').catch(()=>{});
-      }
     }
 
-    exportBtn.onclick = ()=> exportAll(currentTab);
+    // --- LOAD CHAT ---
+    async function loadChat() {
+        const table = document.querySelector("#chat-table tbody");
+        table.innerHTML = "";
 
-    function exportAll(type){
-      const data = type==='quotes' ? cache.quotes : cache.chats;
-      const rows = [];
-      if(type==='quotes') rows.push(['id','contact_name','phone','mode','from','to','qty','weight','status','ts','cargo']);
-      else rows.push(['id','name','phone','message','status','ts']);
-      Object.keys(data).forEach(k=>{
-        const v = data[k];
-        if(type==='quotes') rows.push([k, v.contact_name||'', v.contact_phone||'', v.shipping_mode||'', v.departure_country||'', v.arrival_country||'', v.quantity||'', v.weight||'', v.status||'', v.ts||'', (v.cargo||'').replace(/\n/g,' ')]);
-        else rows.push([k, v.name||'', v.phone||'', (v.message||'').replace(/\n/g,' '), v.status||'', v.timestamp||'']);
-      });
-      const csv = rows.map(r=> r.map(c=>'\"'+(c+'').replace(/\"/g,'\"\"')+'\"').join(',')).join('\n');
-      const blob = new Blob([csv],{type:'text/csv'}); const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href=url; a.download=type+'_export.csv'; a.click(); URL.revokeObjectURL(url);
+        const snapshot = await getDocs(collection(db, "Chat"));
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            table.innerHTML += `
+                <tr>
+                    <td>${data.user}</td>
+                    <td>${data.message}</td>
+                </tr>
+            `;
+        });
     }
-  </script>
+</script>
+
 </body>
 </html>
-
-
-
-
