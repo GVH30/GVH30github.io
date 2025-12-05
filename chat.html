@@ -4,24 +4,151 @@
   <meta charset="utf-8" />
   <title>GVH — Chat Support</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
   <style>
-    :root{--bg:#070707;--card:#0f0f10;--gold:#d4af37;--muted:#bfbfbf;--input:#131313}
-    body{margin:0;font-family:'Inter',Arial;background:linear-gradient(180deg,#040404,#0b0b0b);color:#eee;padding:22px}
-    .wrap{max-width:640px;margin:0 auto}
-    .card{background:var(--card);padding:20px;border-radius:12px;border:1px solid rgba(212,175,55,0.06);box-shadow:0 10px 30px rgba(0,0,0,0.6)}
-    h1{margin:0;color:var(--gold)}
-    .small{color:var(--muted);font-size:13px;margin-top:6px}
-    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
-    input,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:var(--input);color:#fff;margin-top:6px}
-    button{background:var(--gold);border:none;padding:10px 14px;border-radius:8px;color:#051018;font-weight:700;cursor:pointer;margin-top:10px}
-    .messages{margin-top:14px;height:300px;overflow:auto;padding:10px;border-radius:8px;background:#0b0b0b}
-    .msg{display:flex;gap:10px;margin-bottom:10px}
-    .bubble{padding:10px;border-radius:12px;max-width:80%}
-    .guest .bubble{background:#12212a;color:#fff;border-top-left-radius:0}
-    .admin .bubble{background:var(--gold);color:#051018;border-top-right-radius:0}
+    :root {
+      --gold:#d4af37;
+      --bg:#070707;
+      --card:#0f0f10;
+      --muted:#bfbfbf;
+      --input:#131313;
+    }
+
+    body {
+      margin:0;
+      font-family:'Inter',Arial;
+      background:linear-gradient(180deg,#000,#0a0a0a,#000);
+      color:#eee;
+      padding:25px;
+    }
+
+    .wrap {
+      max-width:650px;
+      margin:0 auto;
+    }
+
+    .card {
+      background:var(--card);
+      padding:22px;
+      border-radius:14px;
+      border:1px solid rgba(212,175,55,0.12);
+      box-shadow:0 0 25px rgba(212,175,55,0.08);
+      transition:.3s;
+    }
+
+    .card:hover {
+      box-shadow:0 0 40px rgba(212,175,55,0.25);
+    }
+
+    h1 {
+      margin:0;
+      color:var(--gold);
+      text-shadow:0 0 12px rgba(212,175,55,0.4);
+    }
+
+    .small {
+      color:var(--muted);
+      font-size:14px;
+      margin-top:6px;
+    }
+
+    .form-row {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:12px;
+    }
+
+    input, textarea {
+      width:100%;
+      padding:12px;
+      border-radius:10px;
+      background:var(--input);
+      border:1px solid rgba(255,255,255,0.1);
+      color:white;
+      font-size:15px;
+      margin-top:6px;
+      transition:.2s;
+    }
+
+    input:focus, textarea:focus {
+      border-color:var(--gold);
+      box-shadow:0 0 10px rgba(212,175,55,0.3);
+      outline:none;
+    }
+
+    button {
+      background:var(--gold);
+      border:none;
+      padding:12px 18px;
+      border-radius:10px;
+      color:#000;
+      font-weight:700;
+      cursor:pointer;
+      margin-top:12px;
+      width:100%;
+      font-size:16px;
+      transition:.3s;
+    }
+
+    button:hover {
+      box-shadow:0 0 20px rgba(212,175,55,0.55);
+      transform:translateY(-2px);
+    }
+
+    .messages {
+      margin-top:15px;
+      height:330px;
+      overflow:auto;
+      padding:12px;
+      border-radius:12px;
+      background:#0b0b0b;
+      border:1px solid rgba(255,255,255,0.05);
+    }
+
+    .msg {
+      display:flex;
+      margin-bottom:12px;
+      animation:fadeIn .3s ease;
+    }
+
+    @keyframes fadeIn {
+      from {opacity:0; transform:translateY(5px);}
+      to   {opacity:1; transform:translateY(0);}
+    }
+
+    .bubble {
+      padding:12px;
+      border-radius:12px;
+      max-width:80%;
+      line-height:1.4;
+      position:relative;
+    }
+
+    .guest .bubble {
+      background:#12212a;
+      color:white;
+      border-top-left-radius:0;
+      box-shadow:0 0 12px rgba(0,150,255,0.25);
+    }
+
+    .admin .bubble {
+      background:var(--gold);
+      color:#051018;
+      border-top-right-radius:0;
+      box-shadow:0 0 12px rgba(212,175,55,0.35);
+    }
+
+    .time {
+      font-size:12px;
+      opacity:0.7;
+      margin-top:6px;
+    }
   </style>
 </head>
+
 <body>
   <div class="wrap">
     <div class="card">
@@ -32,9 +159,11 @@
         <input id="name" placeholder="Name">
         <input id="phone" placeholder="Phone">
       </div>
+
       <input id="pickup" placeholder="Pickup area">
       <input id="dest" placeholder="Destination">
       <textarea id="message" rows="3" placeholder="Message (parcel details)"></textarea>
+
       <button id="sendBtn">Send Message</button>
 
       <div class="messages" id="messages"></div>
@@ -62,23 +191,30 @@
     // Guest ID
     let guestId = localStorage.getItem("gvh_guestId");
     if (!guestId) {
-      guestId = "g_" + Math.random().toString(36).substring(2, 10);
+      guestId = "g_" + Math.random().toString(36).substring(2,10);
       localStorage.setItem("gvh_guestId", guestId);
     }
 
     const messagesDiv = document.getElementById("messages");
 
-    function addBubble(text, who, time){
-      const box = document.createElement("div");
-      box.className = "msg " + who;
-      box.innerHTML = `<div class="bubble">${text}<div style="font-size:12px;color:#bfbfbf;margin-top:6px">${time}</div></div>`;
-      messagesDiv.appendChild(box);
+    function addBubble(text, sender, time){
+      const row = document.createElement("div");
+      row.className = "msg " + sender;
+
+      row.innerHTML = `
+        <div class="bubble">
+          ${text}
+          <div class="time">${time}</div>
+        </div>
+      `;
+
+      messagesDiv.appendChild(row);
       messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
 
-    // Send message
+    // Send
     document.getElementById("sendBtn").onclick = () => {
-      const data = {
+      const payload = {
         guestId,
         name: document.getElementById("name").value.trim(),
         phone: document.getElementById("phone").value.trim(),
@@ -89,19 +225,21 @@
         from: "guest"
       };
 
-      if (!data.message) return alert("Please type a message");
+      if (!payload.message) return alert("Please type a message");
 
-      db.ref("chats").push(data);
+      db.ref("chats").push(payload);
       document.getElementById("message").value = "";
     };
 
-    // Load only this user's chat
+    // Load chat
     db.ref("chats").orderByChild("guestId").equalTo(guestId).on("value", snap => {
       messagesDiv.innerHTML = "";
 
       snap.forEach(child => {
         const msg = child.val();
-        addBubble(msg.message, "guest", new Date(msg.timestamp).toLocaleString());
+        const time = new Date(msg.timestamp).toLocaleString();
+
+        addBubble(msg.message, "guest", time);
 
         if (msg.replies) {
           Object.values(msg.replies).forEach(r => {
