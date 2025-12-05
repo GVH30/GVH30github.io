@@ -1,3 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>GVH Admin Panel</title>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
+<style>
+  body {
+    background: #0f0f10;
+    color: white;
+    font-family: Arial;
+    padding: 20px;
+  }
+  .reply-box {
+    background: #1a1a1a;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+  }
+  .reply-btn {
+    padding: 8px 15px;
+    background: #d4af37;
+    border: none;
+    color: black;
+    font-weight: bold;
+    border-radius: 6px;
+    margin-top: 10px;
+    cursor: pointer;
+  }
+</style>
+</head>
+
+<body>
+<h2>GVH Admin — Chats</h2>
+
+<div id="chatList">Loading chats...</div>
+
 <script>
 const firebaseConfig = {
   apiKey: "AIzaSyDVcsRaPihq3hoNiEjnIyUgncIL98nJh04",
@@ -11,7 +53,7 @@ const db = firebase.database();
 
 const chatList = document.getElementById("chatList");
 
-// LOAD ALL CHAT THREADS
+// LOAD ALL CHATS
 db.ref("chats").on("value", snap => {
   chatList.innerHTML = "";
 
@@ -22,11 +64,10 @@ db.ref("chats").on("value", snap => {
     let html = `
       <div class="reply-box">
         <b>${chat.name || "Guest"} (${chat.phone || "No Phone"})</b><br>
-        <small>Pickup: ${chat.pickup || "N/A"} — Dest: ${chat.dest || "N/A"}</small><br>
         <small>Chat ID: ${chatId}</small><br><br>
     `;
 
-    // Messages
+    // Messages inside the chat
     if (chat.messages) {
       Object.values(chat.messages).forEach(m => {
         html += `
@@ -40,7 +81,8 @@ db.ref("chats").on("value", snap => {
     }
 
     html += `
-      <textarea id="reply_${chatId}" placeholder="Type reply..." style="width:100%;margin-top:10px;padding:8px;border-radius:8px;background:#0f0f10;color:#fff;"></textarea>
+      <textarea id="reply_${chatId}" placeholder="Type reply..."
+      style="width:100%;margin-top:10px;padding:10px;border-radius:8px;background:#111;color:#fff;"></textarea>
       <button class="reply-btn" onclick="sendReply('${chatId}')">Send Reply</button>
       </div>
     `;
@@ -63,3 +105,6 @@ function sendReply(chatId) {
   document.getElementById("reply_" + chatId).value = "";
 }
 </script>
+
+</body>
+</html>
