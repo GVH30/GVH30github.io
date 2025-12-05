@@ -2,184 +2,205 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>GVH Transport Services</title>
+  <title>GVH Admin Panel</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
   <style>
+    :root {
+      --gold:#d4af37;
+      --bg:#070707;
+      --card:#0f0f10;
+      --border:rgba(212,175,55,0.25);
+    }
+
     body {
-      margin: 0;
-      font-family: 'Inter', Arial;
-      background: #070707;
-      color: #f1f1f1;
-      padding: 25px;
-    }
-    .wrap {
-      max-width: 720px;
-      margin: auto;
-    }
-    h1 { color: #d4af37; }
-
-    .quote-box {
-      background: #0f0f10;
-      padding: 20px;
-      margin-top: 15px;
-      border-radius: 12px;
-      border: 1px solid rgba(212,175,55,0.25);
-      box-shadow: 0 0 15px rgba(0,0,0,0.25);
-      transition: 0.3s;
-    }
-    .quote-box:hover {
-      transform: scale(1.02);
-      box-shadow: 0 0 25px rgba(212,175,55,0.35);
-    }
-    .quote { font-size: 19px; margin-bottom: 6px; color:#f5e8b8; }
-    .author { color: #bfbfbf; font-size: 14px; }
-
-    .btn {
-      margin-top: 20px;
-      display: inline-block;
-      background: #d4af37;
-      color: #000;
-      padding: 12px 18px;
-      border-radius: 10px;
-      font-size: 17px;
-      font-weight: 700;
-      text-decoration: none;
-      transition: 0.3s;
-    }
-    .btn:hover {
-      opacity: 0.85;
-      transform: scale(1.05);
+      margin:0;
+      font-family:'Inter',Arial;
+      background:#000;
+      color:#eee;
+      padding:25px;
     }
 
-    input, select {
-      width: 100%;
-      padding: 10px;
-      margin-top: 6px;
-      background: #101010;
-      border: 1px solid #333;
-      border-radius: 10px;
-      color: white;
+    h1 { color:var(--gold); text-align:center; }
+
+    .section {
+      margin-top:25px;
+      background:var(--card);
+      padding:20px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      box-shadow:0 0 20px rgba(212,175,55,0.15);
     }
 
-    label { margin-top: 10px; display: block; }
+    .title {
+      font-size:22px;
+      font-weight:700;
+      color:var(--gold);
+      margin-bottom:12px;
+    }
 
-    #success {
-      margin-top: 10px;
-      padding: 10px;
-      background: #0a480a;
-      border-radius: 8px;
-      display: none;
-      color: #c7ffc7;
+    table {
+      width:100%;
+      border-collapse:collapse;
+      margin-top:10px;
+    }
+
+    th, td {
+      border:1px solid #333;
+      padding:8px;
+      font-size:14px;
+    }
+
+    th {
+      background:#141414;
+      color:var(--gold);
+    }
+
+    tr:hover {
+      background:#1c1c1c;
+    }
+
+    .reply-box {
+      margin-top:10px;
+      padding:10px;
+      border-radius:8px;
+      background:#131313;
+      border:1px solid #333;
+    }
+
+    .reply-btn {
+      background:var(--gold);
+      border:none;
+      padding:5px 12px;
+      border-radius:6px;
+      cursor:pointer;
+      font-weight:600;
+      margin-top:8px;
     }
   </style>
 </head>
 
 <body>
-<nav>
-  <a href="admin.html" style="color:#bfbfbf;text-decoration:none;font-weight:600">Admin</a>
-</nav>
 
-<div class="wrap">
-  <h1>GVH Delivery & Parcel Service</h1>
-  <p>Fast, secure and reliable delivery anywhere. Chat with us for instant support!</p>
+<h1>GVH — Admin Panel</h1>
 
-  <!-- DYNAMIC QUOTES FROM FIRESTORE -->
-  <div id="quotes-area">
-    <h2 style="color:#d4af37">Customer Trust Quotes</h2>
-  </div>
-
-  <!-- FORM -->
-  <label>Courier Partner</label>
-  <select id="select_courier_partner" required>
-    <option value="">Choose</option>
-    <option>Blue Dart</option>
-    <option>DTDC</option>
-    <option>Delhivery</option>
-  </select>
-
-  <label>Shipping Mode</label>
-  <select id="shipping_mode" required>
-    <option value="">Choose</option>
-    <option>Domestic Express</option>
-    <option>Air Freight</option>
-    <option>Sea Freight</option>
-    <option>Road Freight</option>
-    <option>International Courier</option>
-  </select>
-
-  <label>Origin Pincode</label>
-  <input id="origin_pincode" required>
-
-  <label>Destination Pincode</label>
-  <input id="destination_pincode" required>
-
-  <label>Product Description</label>
-  <input id="product" required>
-
-  <label>Weight (kg)</label>
-  <input id="weight" type="number" required>
-
-  <label>Dimensions (cm) L × W × H</label>
-  <div style="display:flex;gap:10px">
-    <input id="length" type="number" placeholder="L">
-    <input id="width" type="number" placeholder="W">
-    <input id="height" type="number" placeholder="H">
-  </div>
-
-  <label>Contact Name</label>
-  <input id="contact_name" required>
-
-  <label>Phone</label>
-  <input id="contact_phone" required>
-
-  <label>Email</label>
-  <input id="contact_email">
-
-  <button class="btn" id="submitBtn">Submit Quote</button>
-
-  <div id="success">Quote submitted successfully!</div>
-
-  <!-- CHAT BUTTON -->
-  <a href="chat.html" class="btn">Open Live Chat</a>
+<!-- QUOTES SECTION -->
+<div class="section">
+  <div class="title">📦 All Quotes</div>
+  <table id="quotesTable">
+    <tr>
+      <th>Name</th>
+      <th>Phone</th>
+      <th>Product</th>
+      <th>From</th>
+      <th>To</th>
+      <th>Weight</th>
+      <th>Time</th>
+    </tr>
+  </table>
 </div>
 
-<!-- FIREBASE -->
+<!-- CHATS SECTION -->
+<div class="section">
+  <div class="title">💬 Customer Chats</div>
+  <div id="chatList"></div>
+</div>
+
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.25.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.25.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.25.0/firebase-database-compat.js"></script>
 
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyDVcsRaPihq3hoNiEjnIyUgncIL98nJh04",
     authDomain: "gvh30-40e07.firebaseapp.com",
+    databaseURL: "https://gvh30-40e07-default-rtdb.asia-southeast1.firebasedatabase.app/",
     projectId: "gvh30-40e07",
-    databaseURL: "https://gvh30-40e07-default-rtdb.asia-southeast1.firebasedatabase.app/"
   };
 
   firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
+  const db = firebase.database();
 
-  // Load quotes dynamically
-  function loadQuotes() {
-    const area = document.getElementById("quotes-area");
+  /* -------------------- LOAD QUOTES -------------------- */
+  const quotesTable = document.getElementById("quotesTable");
 
-    db.collection("Quotes").onSnapshot(snap => {
-      area.innerHTML = "<h2 style='color:#d4af37'>Customer Trust Quotes</h2>";
+  db.ref("quotes").on("value", snap => {
+    quotesTable.innerHTML = `
+      <tr>
+        <th>Name</th>
+        <th>Phone</th>
+        <th>Product</th>
+        <th>From</th>
+        <th>To</th>
+        <th>Weight</th>
+        <th>Time</th>
+      </tr>
+    `;
 
-      snap.forEach(doc => {
-        const q = doc.data();
-        area.innerHTML += `
-          <div class="quote-box">
-            <div class="quote">“${q.quote}”</div>
-            <div class="author">— ${q.author || "Unknown"}</div>
-          </div>
-        `;
-      });
+    snap.forEach(child => {
+      const q = child.val();
+      const row = `
+        <tr>
+          <td>${q.name}</td>
+          <td>${q.phone}</td>
+          <td>${q.product}</td>
+          <td>${q.origin}</td>
+          <td>${q.dest}</td>
+          <td>${q.weight}kg</td>
+          <td>${new Date(q.ts).toLocaleString()}</td>
+        </tr>`;
+
+      quotesTable.innerHTML += row;
     });
-  }
+  });
 
-  loadQuotes();
+  /* -------------------- LOAD CHATS -------------------- */
+  const chatList = document.getElementById("chatList");
+
+  db.ref("chats").on("value", snap => {
+    chatList.innerHTML = "";
+
+    snap.forEach(child => {
+      const chat = child.val();
+      const chatId = child.key;
+
+      let repliesHTML = "";
+      if (chat.replies) {
+        Object.values(chat.replies).forEach(r => {
+          repliesHTML += `<div style="margin-top:6px;color:#d4af37;">Admin: ${r.message}</div>`;
+        });
+      }
+
+      const block = `
+        <div class="reply-box">
+          <b>${chat.name} (${chat.phone})</b><br>
+          <small>${new Date(chat.timestamp).toLocaleString()}</small><br><br>
+          <div>Customer: ${chat.message}</div>
+
+          ${repliesHTML}
+
+          <textarea id="r_${chatId}" placeholder="Type reply..." style="width:100%;margin-top:10px;padding:8px;border-radius:8px;background:#0f0f10;color:#fff;"></textarea>
+          <button class="reply-btn" onclick="sendReply('${chatId}')">Send Reply</button>
+        </div>
+      `;
+
+      chatList.innerHTML += block;
+    });
+  });
+
+  /* -------------------- SEND ADMIN REPLY -------------------- */
+  function sendReply(id) {
+    const msg = document.getElementById("r_" + id).value.trim();
+    if (!msg) return alert("Type a reply.");
+
+    db.ref("chats/" + id + "/replies").push({
+      message: msg,
+      ts: Date.now()
+    });
+
+    document.getElementById("r_" + id).value = "";
+  }
 </script>
 
 </body>
