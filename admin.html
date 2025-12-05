@@ -1,276 +1,185 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>GVH Admin Panel</title>
+  <meta charset="utf-8" />
+  <title>GVH Transport Services</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
-<style>
+  <style>
     body {
-        font-family: Arial;
-        background: #f4f4f4;
-        margin: 0;
-        padding: 0;
+      margin: 0;
+      font-family: 'Inter', Arial;
+      background: #070707;
+      color: #f1f1f1;
+      padding: 25px;
     }
-    .login-box, .panel {
-        width: 500px;
-        background: white;
-        padding: 25px;
-        margin: 40px auto;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    .wrap {
+      max-width: 720px;
+      margin: auto;
     }
-    input, textarea {
-        width: 100%;
-        padding: 10px;
-        margin: 8px 0;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-    }
-    button {
-        padding: 10px 15px;
-        border: none;
-        background: #2196f3;
-        color: white;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-top: 8px;
-    }
-    #panel-content { display: none; }
+    h1 { color: #d4af37; }
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 15px;
-        background: #fff;
+    .quote-box {
+      background: #0f0f10;
+      padding: 20px;
+      margin-top: 15px;
+      border-radius: 12px;
+      border: 1px solid rgba(212,175,55,0.25);
+      box-shadow: 0 0 15px rgba(0,0,0,0.25);
+      transition: 0.3s;
     }
-    th, td {
-        padding: 10px;
-        border-bottom: 1px solid #ddd;
+    .quote-box:hover {
+      transform: scale(1.02);
+      box-shadow: 0 0 25px rgba(212,175,55,0.35);
     }
-    .reply-box {
-        margin-top: 8px;
-        display: flex;
-        gap: 5px;
+    .quote { font-size: 19px; margin-bottom: 6px; color:#f5e8b8; }
+    .author { color: #bfbfbf; font-size: 14px; }
+
+    .btn {
+      margin-top: 20px;
+      display: inline-block;
+      background: #d4af37;
+      color: #000;
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-size: 17px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: 0.3s;
     }
-</style>
+    .btn:hover {
+      opacity: 0.85;
+      transform: scale(1.05);
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      background: #101010;
+      border: 1px solid #333;
+      border-radius: 10px;
+      color: white;
+    }
+
+    label { margin-top: 10px; display: block; }
+
+    #success {
+      margin-top: 10px;
+      padding: 10px;
+      background: #0a480a;
+      border-radius: 8px;
+      display: none;
+      color: #c7ffc7;
+    }
+  </style>
 </head>
+
 <body>
+<nav>
+  <a href="admin.html" style="color:#bfbfbf;text-decoration:none;font-weight:600">Admin</a>
+</nav>
 
-<!-- LOGIN SCREEN -->
-<div id="login-box" class="login-box">
-    <h2>Admin Login</h2>
-    <input type="email" id="email" placeholder="Email">
-    <input type="password" id="password" placeholder="Password">
-    <button id="login-btn">Login</button>
-    <p id="login-error" style="color:red;"></p>
+<div class="wrap">
+  <h1>GVH Delivery & Parcel Service</h1>
+  <p>Fast, secure and reliable delivery anywhere. Chat with us for instant support!</p>
+
+  <!-- DYNAMIC QUOTES FROM FIRESTORE -->
+  <div id="quotes-area">
+    <h2 style="color:#d4af37">Customer Trust Quotes</h2>
+  </div>
+
+  <!-- FORM -->
+  <label>Courier Partner</label>
+  <select id="select_courier_partner" required>
+    <option value="">Choose</option>
+    <option>Blue Dart</option>
+    <option>DTDC</option>
+    <option>Delhivery</option>
+  </select>
+
+  <label>Shipping Mode</label>
+  <select id="shipping_mode" required>
+    <option value="">Choose</option>
+    <option>Domestic Express</option>
+    <option>Air Freight</option>
+    <option>Sea Freight</option>
+    <option>Road Freight</option>
+    <option>International Courier</option>
+  </select>
+
+  <label>Origin Pincode</label>
+  <input id="origin_pincode" required>
+
+  <label>Destination Pincode</label>
+  <input id="destination_pincode" required>
+
+  <label>Product Description</label>
+  <input id="product" required>
+
+  <label>Weight (kg)</label>
+  <input id="weight" type="number" required>
+
+  <label>Dimensions (cm) L × W × H</label>
+  <div style="display:flex;gap:10px">
+    <input id="length" type="number" placeholder="L">
+    <input id="width" type="number" placeholder="W">
+    <input id="height" type="number" placeholder="H">
+  </div>
+
+  <label>Contact Name</label>
+  <input id="contact_name" required>
+
+  <label>Phone</label>
+  <input id="contact_phone" required>
+
+  <label>Email</label>
+  <input id="contact_email">
+
+  <button class="btn" id="submitBtn">Submit Quote</button>
+
+  <div id="success">Quote submitted successfully!</div>
+
+  <!-- CHAT BUTTON -->
+  <a href="chat.html" class="btn">Open Live Chat</a>
 </div>
 
-<!-- ADMIN PANEL -->
-<div id="panel-content" class="panel">
-    <h2>GVH Admin Panel</h2>
-    <button id="logout-btn" style="background:#f44336">Logout</button>
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/9.25.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.25.0/firebase-firestore-compat.js"></script>
 
-    <h3>Quotes</h3>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDVcsRaPihq3hoNiEjnIyUgncIL98nJh04",
+    authDomain: "gvh30-40e07.firebaseapp.com",
+    projectId: "gvh30-40e07",
+    databaseURL: "https://gvh30-40e07-default-rtdb.asia-southeast1.firebasedatabase.app/"
+  };
 
-    <input id="quote-text" placeholder="Quote text">
-    <input id="quote-author" placeholder="Author">
-    <button id="add-quote-btn">Add Quote</button>
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
 
-    <table id="quotes-table">
-        <thead><tr><th>Quote</th><th>Author</th><th>Action</th></tr></thead>
-        <tbody></tbody>
-    </table>
+  // Load quotes dynamically
+  function loadQuotes() {
+    const area = document.getElementById("quotes-area");
 
-    <h3>Chat Messages</h3>
-    <table id="chat-table">
-        <thead><tr><th>User</th><th>Message</th><th>Reply</th></tr></thead>
-        <tbody></tbody>
-    </table>
-</div>
+    db.collection("Quotes").onSnapshot(snap => {
+      area.innerHTML = "<h2 style='color:#d4af37'>Customer Trust Quotes</h2>";
 
-<!-- FIREBASE MODULES -->
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { 
-        getAuth, 
-        signInWithEmailAndPassword, 
-        onAuthStateChanged, 
-        signOut 
-    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-    import {
-        getDatabase,
-        ref,
-        onValue,
-        update
-    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-
-    import { 
-        getFirestore,
-        collection,
-        addDoc,
-        getDocs,
-        deleteDoc,
-        doc
-    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-    // --- YOUR FIREBASE CONFIG ---
-    const firebaseConfig = {
-        apiKey: "AIzaSyDVcsRaPihq3hoNiEjnIyUgncIL98nJh04",
-        authDomain: "gvh30-40e07.firebaseapp.com",
-        projectId: "gvh30-40e07",
-        storageBucket: "gvh30-40e07.firebasestorage.app",
-        messagingSenderId: "999635428816",
-        appId: "1:999635428816:web:15a48e752b1621c84005d5",
-        measurementId: "G-LZZVS3F9FP",
-        databaseURL: "https://gvh30-40e07-default-rtdb.asia-southeast1.firebasedatabase.app/"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const rtdb = getDatabase(app);
-
-    const loginBox = document.getElementById("login-box");
-    const panelContent = document.getElementById("panel-content");
-
-    // --- LOGIN ---
-    document.getElementById("login-btn").addEventListener("click", async () => {
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value.trim();
-        const errorBox = document.getElementById("login-error");
-
-        try {
-            await signInWithEmailAndPassword(auth, email, password);
-        } catch (err) {
-            errorBox.innerText = "Invalid login!";
-        }
+      snap.forEach(doc => {
+        const q = doc.data();
+        area.innerHTML += `
+          <div class="quote-box">
+            <div class="quote">“${q.quote}”</div>
+            <div class="author">— ${q.author || "Unknown"}</div>
+          </div>
+        `;
+      });
     });
+  }
 
-    // --- AUTH STATE ---
-    onAuthStateChanged(auth, user => {
-        if (user) {
-            loginBox.style.display = "none";
-            panelContent.style.display = "block";
-            loadQuotes();
-            loadChats();
-        } else {
-            loginBox.style.display = "block";
-            panelContent.style.display = "none";
-        }
-    });
-
-    // --- LOGOUT ---
-    document.getElementById("logout-btn").addEventListener("click", () => {
-        signOut(auth);
-    });
-
-    // -------------------------
-    // QUOTES (Firestore)
-    // -------------------------
-
-    // Add quote
-    document.getElementById("add-quote-btn").addEventListener("click", async () => {
-        const text = document.getElementById("quote-text").value.trim();
-        const author = document.getElementById("quote-author").value.trim();
-
-        if (!text) return alert("Enter quote text!");
-
-        await addDoc(collection(db, "Quotes"), {
-            quote: text,
-            author: author
-        });
-
-        document.getElementById("quote-text").value = "";
-        document.getElementById("quote-author").value = "";
-        loadQuotes();
-    });
-
-    // Load quotes
-    async function loadQuotes() {
-        const table = document.querySelector("#quotes-table tbody");
-        table.innerHTML = "";
-
-        const snapshot = await getDocs(collection(db, "Quotes"));
-        snapshot.forEach(docSnap => {
-            const data = docSnap.data();
-            table.innerHTML += `
-                <tr>
-                    <td>${data.quote}</td>
-                    <td>${data.author}</td>
-                    <td><button onclick="deleteQuote('${docSnap.id}')">Delete</button></td>
-                </tr>
-            `;
-        });
-    }
-
-    // Delete quote
-    window.deleteQuote = async function(id) {
-        await deleteDoc(doc(db, "Quotes", id));
-        loadQuotes();
-    };
-
-    // -------------------------
-    // CHAT (Realtime DB)
-    // -------------------------
-
-    function loadChats() {
-        const chatRef = ref(rtdb, "chats");
-
-        onValue(chatRef, snap => {
-            const table = document.querySelector("#chat-table tbody");
-            table.innerHTML = "";
-
-            snap.forEach(child => {
-                const id = child.key;
-                const m = child.val();
-
-                table.innerHTML += `
-                <tr>
-                    <td>
-                        <strong>${m.name || "Guest"}</strong> <br>
-                        ${m.phone || ""} <br>
-                        <small>${new Date(m.timestamp).toLocaleString()}</small>
-                    </td>
-
-                    <td>${m.message}</td>
-
-                    <td>
-                        <div class="reply-box">
-                            <input id="reply-${id}" placeholder="Reply...">
-                            <button onclick="sendReply('${id}')">Send</button>
-                        </div>
-
-                        ${m.replies ? Object.values(m.replies).map(r => `
-                            <div style='background:#eee;padding:5px;border-radius:5px;margin-top:5px;'>
-                                <strong>GVH:</strong> ${r.message}<br>
-                                <small>${new Date(r.ts).toLocaleString()}</small>
-                            </div>
-                        `).join("") : ""}
-                    </td>
-                </tr>`;
-            });
-        });
-    }
-
-    // Send reply
-    window.sendReply = function(chatId) {
-        const input = document.getElementById("reply-" + chatId);
-        const text = input.value.trim();
-        if (!text) return;
-
-        const replyRef = ref(rtdb, "chats/" + chatId + "/replies");
-
-        const replyObj = {
-            message: text,
-            ts: Date.now(),
-            from: "admin"
-        };
-
-        update(replyRef, { [Date.now()]: replyObj });
-        input.value = "";
-    };
+  loadQuotes();
 </script>
 
 </body>
