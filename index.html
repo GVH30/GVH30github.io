@@ -5,51 +5,128 @@
   <title>GVH Transport Services</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
   <style>
+    :root {
+      --gold: #d4af37;
+      --bg: #070707;
+      --card: #0f0f10;
+      --border: rgba(212,175,55,0.18);
+    }
+
     body {
       margin: 0;
       font-family: 'Inter', Arial;
-      background: #070707;
-      color: #f1f1f1;
-      padding: 25px;
+      background: linear-gradient(180deg,#000,#0a0a0a,#000);
+      color: #ffffff;
+      padding: 30px;
     }
+
     .wrap {
-      max-width: 720px;
+      max-width: 750px;
       margin: auto;
     }
-    h1 { color: #d4af37; }
-    .quote-box {
-      background: #0f0f10;
-      padding: 20px;
-      margin-top: 20px;
-      border-radius: 12px;
-      border: 1px solid rgba(212,175,55,0.2);
+
+    h1 {
+      color: var(--gold);
+      font-size: 30px;
+      margin-bottom: 6px;
+      text-shadow: 0 0 12px rgba(212,175,55,0.4);
     }
-    .quote { font-size: 20px; margin-bottom: 6px; }
-    .author { color: #bfbfbf; font-size: 14px; }
+
+    p {
+      opacity: .85;
+    }
+
+    .quote-box {
+      background: var(--card);
+      padding: 20px;
+      margin-top: 18px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      box-shadow: 0 0 25px rgba(212,175,55,0.08);
+      transition: .3s;
+    }
+
+    .quote-box:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 35px rgba(212,175,55,0.2);
+    }
+
+    .quote {
+      font-size: 20px;
+      margin-bottom: 6px;
+      color: var(--gold);
+    }
+
+    .author {
+      font-size: 14px;
+      opacity: 0.7;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: 600;
+      color: var(--gold);
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: #131313;
+      color: white;
+      margin-top: 6px;
+      font-size: 15px;
+    }
+
     .btn {
       margin-top: 20px;
       display: inline-block;
-      background: #d4af37;
+      background: var(--gold);
       color: #000;
-      padding: 12px 18px;
-      border-radius: 10px;
-      font-size: 17px;
+      padding: 14px 20px;
+      border-radius: 12px;
+      font-size: 18px;
       font-weight: 700;
       text-decoration: none;
+      transition: .3s;
+      text-align: center;
+    }
+
+    .btn:hover {
+      box-shadow: 0 0 20px rgba(212,175,55,0.55);
+      transform: translateY(-2px);
+    }
+
+    .success {
+      display: none;
+      background: #0f0f10;
+      padding: 12px;
+      margin-top: 15px;
+      border-radius: 10px;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      text-align: center;
+      font-weight: 700;
     }
   </style>
 </head>
+
 <body>
-<nav>
-  <!-- ADMIN BUTTON -->
-      <a href="admin.html" style="color:var(--muted);text-decoration:none">Admin</a>
-    </nav>
+
   <div class="wrap">
+
+    <nav style="margin-bottom:20px;">
+      <a href="admin.html" style="color:var(--gold);font-weight:600;">Admin Panel</a>
+    </nav>
+
     <h1>GVH Delivery & Parcel Service</h1>
     <p>Fast, secure and reliable delivery anywhere. Chat with us for instant support!</p>
 
-    <!-- STATIC QUOTES -->
+    <!-- Quotes -->
     <div class="quote-box">
       <div class="quote">“Fast Delivery Begins With Trust.”</div>
       <div class="author">— GVH Logistics</div>
@@ -59,67 +136,104 @@
       <div class="quote">“Your Parcel, Our Priority.”</div>
       <div class="author">— GVH Team</div>
     </div>
-<label>Courier Partner</label>
-      <select id="select_courier_partner" required>
-        <option value="">Choose</option>
-        <option>Blue Dart</option>
-        <option>DTDC</option>
-        <option>Delhivery</option>
-      </select>
 
-      <label>Shipping Mode</label>
-      <select id="shipping_mode" required>
-        <option value="">Choose</option>
-        <option>Domestic Express</option>
-        <option>Air Freight</option>
-        <option>Sea Freight</option>
-        <option>Road Freight</option>
-        <option>International Courier</option>
-      </select>
+    <!-- FORM -->
+    <label>Courier Partner</label>
+    <select id="select_courier_partner">
+      <option value="">Choose</option>
+      <option>Blue Dart</option>
+      <option>DTDC</option>
+      <option>Delhivery</option>
+    </select>
 
-      <label>Origin Pincode</label>
-      <input id="origin_pincode" required>
+    <label>Shipping Mode</label>
+    <select id="shipping_mode">
+      <option value="">Choose</option>
+      <option>Domestic Express</option>
+      <option>Air Freight</option>
+      <option>Sea Freight</option>
+      <option>Road Freight</option>
+      <option>International Courier</option>
+    </select>
 
-      <label>Destination Pincode</label>
-      <input id="destination_pincode" required>
+    <label>Origin Pincode</label>
+    <input id="origin_pincode">
 
-    <div class="full">
-      <label>Product Description</label>
-      <input id="product" required>
+    <label>Destination Pincode</label>
+    <input id="destination_pincode">
+
+    <label>Product Description</label>
+    <input id="product">
+
+    <label>Weight (kg)</label>
+    <input id="weight" type="number">
+
+    <label>Dimensions (cm)</label>
+    <div style="display:flex;gap:10px;">
+      <input id="length" type="number" placeholder="L">
+      <input id="width" type="number" placeholder="W">
+      <input id="height" type="number" placeholder="H">
     </div>
 
-      <label>Weight (kg)</label>
-      <input id="weight" type="number" required>
+    <label>Contact Name</label>
+    <input id="contact_name">
 
-      <label>Dimensions (cm) L × W × H</label>
-      <div style="display:flex;gap:10px">
-        <input id="length" type="number" placeholder="L">
-        <input id="width" type="number" placeholder="W">
-        <input id="height" type="number" placeholder="H">
-      </div>
+    <label>Phone</label>
+    <input id="contact_phone">
 
-      <label>Contact Name</label>
-      <input id="contact_name" required>
+    <label>Email</label>
+    <input id="contact_email">
 
-      <label>Phone</label>
-      <input id="contact_phone" required>
-
-      <div>
-            <label>Email</label>
-            <input id="contact_email">
-          </div>
-      <button type="button" id="submitBtn" class="btn" style="margin-top:15px">Submit Quote</button>
-    </form>
+    <button id="submitBtn" class="btn">Submit Quote</button>
 
     <div id="success" class="success">Quote submitted successfully!</div>
 
-  </div>
-</div>
-    <!-- CHAT BUTTON -->
-    <a href="chat.html" class="btn">Open Live Chat</a>
+    <a href="chat.html" class="btn" style="margin-top:15px;display:block;">Open Live Chat</a>
   </div>
 
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.25.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.25.0/firebase-database-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDVcsRaPihq3hoNiEjnIyUgncIL98nJh04",
+      authDomain: "gvh30-40e07.firebaseapp.com",
+      projectId: "gvh30-40e07",
+      storageBucket: "gvh30-40e07.firebasestorage.app",
+      messagingSenderId: "999635428816",
+      appId: "1:999635428816:web:15a48e752b1621c84005d5",
+      measurementId: "G-LZZVS3F9FP",
+      databaseURL: "https://gvh30-40e07-default-rtdb.asia-southeast1.firebasedatabase.app/"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    document.getElementById("submitBtn").onclick = () => {
+      const quote = {
+        courier: document.getElementById("select_courier_partner").value,
+        mode: document.getElementById("shipping_mode").value,
+        origin: document.getElementById("origin_pincode").value,
+        dest: document.getElementById("destination_pincode").value,
+        product: document.getElementById("product").value,
+        weight: document.getElementById("weight").value,
+        length: document.getElementById("length").value,
+        width: document.getElementById("width").value,
+        height: document.getElementById("height").value,
+        name: document.getElementById("contact_name").value,
+        phone: document.getElementById("contact_phone").value,
+        email: document.getElementById("contact_email").value,
+        ts: Date.now()
+      };
+
+      db.ref("quotes").push(quote).then(() => {
+        document.getElementById("success").style.display = "block";
+        setTimeout(() => {
+          document.getElementById("success").style.display = "none";
+        }, 2000);
+      });
+    };
+  </script>
 </body>
 </html>
-
-
