@@ -1,207 +1,65 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <title>GVH Admin Panel</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
-  <style>
-    :root {
-      --gold:#d4af37;
-      --bg:#070707;
-      --card:#0f0f10;
-      --border:rgba(212,175,55,0.25);
-    }
-
-    body {
-      margin:0;
-      font-family:'Inter',Arial;
-      background:#000;
-      color:#eee;
-      padding:25px;
-    }
-
-    h1 { color:var(--gold); text-align:center; }
-
-    .section {
-      margin-top:25px;
-      background:var(--card);
-      padding:20px;
-      border-radius:14px;
-      border:1px solid var(--border);
-      box-shadow:0 0 20px rgba(212,175,55,0.15);
-    }
-
-    .title {
-      font-size:22px;
-      font-weight:700;
-      color:var(--gold);
-      margin-bottom:12px;
-    }
-
-    table {
-      width:100%;
-      border-collapse:collapse;
-      margin-top:10px;
-    }
-
-    th, td {
-      border:1px solid #333;
-      padding:8px;
-      font-size:14px;
-    }
-
-    th {
-      background:#141414;
-      color:var(--gold);
-    }
-
-    tr:hover {
-      background:#1c1c1c;
-    }
-
-    .reply-box {
-      margin-top:10px;
-      padding:10px;
-      border-radius:8px;
-      background:#131313;
-      border:1px solid #333;
-    }
-
-    .reply-btn {
-      background:var(--gold);
-      border:none;
-      padding:5px 12px;
-      border-radius:6px;
-      cursor:pointer;
-      font-weight:600;
-      margin-top:8px;
-    }
-  </style>
-</head>
-
-<body>
-
-<h1>GVH — Admin Panel</h1>
-
-<!-- QUOTES SECTION -->
-<div class="section">
-  <div class="title">📦 All Quotes</div>
-  <table id="quotesTable">
-    <tr>
-      <th>Name</th>
-      <th>Phone</th>
-      <th>Product</th>
-      <th>From</th>
-      <th>To</th>
-      <th>Weight</th>
-      <th>Time</th>
-    </tr>
-  </table>
-</div>
-
-<!-- CHATS SECTION -->
-<div class="section">
-  <div class="title">💬 Customer Chats</div>
-  <div id="chatList"></div>
-</div>
-
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/9.25.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.25.0/firebase-database-compat.js"></script>
-
 <script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyDVcsRaPihq3hoNiEjnIyUgncIL98nJh04",
-    authDomain: "gvh30-40e07.firebaseapp.com",
-    databaseURL: "https://gvh30-40e07-default-rtdb.asia-southeast1.firebasedatabase.app/",
-    projectId: "gvh30-40e07",
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyDVcsRaPihq3hoNiEjnIyUgncIL98nJh04",
+  authDomain: "gvh30-40e07.firebaseapp.com",
+  databaseURL: "https://gvh30-40e07-default-rtdb.asia-southeast1.firebasedatabase.app/",
+  projectId: "gvh30-40e07"
+};
 
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
-  /* -------------------- LOAD QUOTES -------------------- */
-  const quotesTable = document.getElementById("quotesTable");
+const chatList = document.getElementById("chatList");
 
-  db.ref("quotes").on("value", snap => {
-    quotesTable.innerHTML = `
-      <tr>
-        <th>Name</th>
-        <th>Phone</th>
-        <th>Product</th>
-        <th>From</th>
-        <th>To</th>
-        <th>Weight</th>
-        <th>Time</th>
-      </tr>
+// LOAD CHAT THREADS
+db.ref("chats").on("value", snap => {
+  chatList.innerHTML = "";
+
+  snap.forEach(child => {
+    const chat = child.val();
+    const chatId = child.key;
+
+    let html = `
+      <div class="reply-box">
+        <b>${chat.name || "Guest"} (${chat.phone || "No Phone"})</b><br>
+        <small>Chat ID: ${chatId}</small><br><br>
     `;
 
-    snap.forEach(child => {
-      const q = child.val();
-      const row = `
-        <tr>
-          <td>${q.name}</td>
-          <td>${q.phone}</td>
-          <td>${q.product}</td>
-          <td>${q.origin}</td>
-          <td>${q.dest}</td>
-          <td>${q.weight}kg</td>
-          <td>${new Date(q.ts).toLocaleString()}</td>
-        </tr>`;
+    // Load messages inside the chat
+    if (chat.messages) {
+      Object.values(chat.messages).forEach(m => {
+        const sender = m.sender === "admin" ? "Admin" : "Customer";
+        html += `
+          <div style="margin-top:6px;">
+            <span style="color:${m.sender === "admin" ? "#d4af37" : "#fff"};">
+              ${sender}: ${m.message}
+            </span>
+          </div>
+        `;
+      });
+    }
 
-      quotesTable.innerHTML += row;
-    });
+    html += `
+      <textarea id="reply_${chatId}" placeholder="Type reply..." style="width:100%;margin-top:10px;padding:8px;border-radius:8px;background:#0f0f10;color:#fff;"></textarea>
+      <button class="reply-btn" onclick="sendReply('${chatId}')">Send Reply</button>
+      </div>
+    `;
+
+    chatList.innerHTML += html;
+  });
+});
+
+// SEND REPLY
+function sendReply(id) {
+  const msg = document.getElementById("reply_" + id).value.trim();
+  if (!msg) return alert("Type a reply.");
+
+  db.ref("chats/" + id + "/messages").push({
+    message: msg,
+    sender: "admin",
+    timestamp: Date.now()
   });
 
-  /* -------------------- LOAD CHATS -------------------- */
-  const chatList = document.getElementById("chatList");
-
-  db.ref("chats").on("value", snap => {
-    chatList.innerHTML = "";
-
-    snap.forEach(child => {
-      const chat = child.val();
-      const chatId = child.key;
-
-      let repliesHTML = "";
-      if (chat.replies) {
-        Object.values(chat.replies).forEach(r => {
-          repliesHTML += `<div style="margin-top:6px;color:#d4af37;">Admin: ${r.message}</div>`;
-        });
-      }
-
-      const block = `
-        <div class="reply-box">
-          <b>${chat.name} (${chat.phone})</b><br>
-          <small>${new Date(chat.timestamp).toLocaleString()}</small><br><br>
-          <div>Customer: ${chat.message}</div>
-
-          ${repliesHTML}
-
-          <textarea id="r_${chatId}" placeholder="Type reply..." style="width:100%;margin-top:10px;padding:8px;border-radius:8px;background:#0f0f10;color:#fff;"></textarea>
-          <button class="reply-btn" onclick="sendReply('${chatId}')">Send Reply</button>
-        </div>
-      `;
-
-      chatList.innerHTML += block;
-    });
-  });
-
-  /* -------------------- SEND ADMIN REPLY -------------------- */
-  function sendReply(id) {
-    const msg = document.getElementById("r_" + id).value.trim();
-    if (!msg) return alert("Type a reply.");
-
-    db.ref("chats/" + id + "/replies").push({
-      message: msg,
-      ts: Date.now()
-    });
-
-    document.getElementById("r_" + id).value = "";
-  }
+  document.getElementById("reply_" + id).value = "";
+}
 </script>
-
-</body>
-</html>
