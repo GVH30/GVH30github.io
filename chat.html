@@ -1,253 +1,83 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <title>GVH — Chat Support</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyDVcsRaPihq3hoNiEjnIyUgncIL98nJh04",
+  authDomain: "gvh30-40e07.firebaseapp.com",
+  databaseURL: "https://gvh30-40e07-default-rtdb.asia-southeast1.firebasedatabase.app/",
+  projectId: "gvh30-40e07",
+  storageBucket: "gvh30-40e07.firebasestorage.app",
+  messagingSenderId: "999635428816",
+  appId: "1:999635428816:web:15a48e752b1621c84005d5"
+};
 
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
-  <style>
-    :root {
-      --gold:#d4af37;
-      --bg:#070707;
-      --card:#0f0f10;
-      --muted:#bfbfbf;
-      --input:#131313;
-    }
+// CREATE OR GET CHAT THREAD
+let chatId = localStorage.getItem("gvh_chatId");
 
-    body {
-      margin:0;
-      font-family:'Inter',Arial;
-      background:linear-gradient(180deg,#000,#0a0a0a,#000);
-      color:#eee;
-      padding:25px;
-    }
+if (!chatId) {
+  chatId = db.ref("chats").push().key; 
+  localStorage.setItem("gvh_chatId", chatId);
 
-    .wrap {
-      max-width:650px;
-      margin:0 auto;
-    }
+  db.ref("chats/" + chatId).set({
+    chatId,
+    name: "",
+    phone: "",
+    pickup: "",
+    dest: "",
+    createdAt: Date.now()
+  });
+}
 
-    .card {
-      background:var(--card);
-      padding:22px;
-      border-radius:14px;
-      border:1px solid rgba(212,175,55,0.12);
-      box-shadow:0 0 25px rgba(212,175,55,0.08);
-      transition:.3s;
-    }
+const messagesDiv = document.getElementById("messages");
 
-    .card:hover {
-      box-shadow:0 0 40px rgba(212,175,55,0.25);
-    }
-
-    h1 {
-      margin:0;
-      color:var(--gold);
-      text-shadow:0 0 12px rgba(212,175,55,0.4);
-    }
-
-    .small {
-      color:var(--muted);
-      font-size:14px;
-      margin-top:6px;
-    }
-
-    .form-row {
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-      margin-top:12px;
-    }
-
-    input, textarea {
-      width:100%;
-      padding:12px;
-      border-radius:10px;
-      background:var(--input);
-      border:1px solid rgba(255,255,255,0.1);
-      color:white;
-      font-size:15px;
-      margin-top:6px;
-      transition:.2s;
-    }
-
-    input:focus, textarea:focus {
-      border-color:var(--gold);
-      box-shadow:0 0 10px rgba(212,175,55,0.3);
-      outline:none;
-    }
-
-    button {
-      background:var(--gold);
-      border:none;
-      padding:12px 18px;
-      border-radius:10px;
-      color:#000;
-      font-weight:700;
-      cursor:pointer;
-      margin-top:12px;
-      width:100%;
-      font-size:16px;
-      transition:.3s;
-    }
-
-    button:hover {
-      box-shadow:0 0 20px rgba(212,175,55,0.55);
-      transform:translateY(-2px);
-    }
-
-    .messages {
-      margin-top:15px;
-      height:330px;
-      overflow:auto;
-      padding:12px;
-      border-radius:12px;
-      background:#0b0b0b;
-      border:1px solid rgba(255,255,255,0.05);
-    }
-
-    .msg {
-      display:flex;
-      margin-bottom:12px;
-      animation:fadeIn .3s ease;
-    }
-
-    @keyframes fadeIn {
-      from {opacity:0; transform:translateY(5px);}
-      to   {opacity:1; transform:translateY(0);}
-    }
-
-    .bubble {
-      padding:12px;
-      border-radius:12px;
-      max-width:80%;
-      line-height:1.4;
-      position:relative;
-    }
-
-    .guest .bubble {
-      background:#12212a;
-      color:white;
-      border-top-left-radius:0;
-      box-shadow:0 0 12px rgba(0,150,255,0.25);
-    }
-
-    .admin .bubble {
-      background:var(--gold);
-      color:#051018;
-      border-top-right-radius:0;
-      box-shadow:0 0 12px rgba(212,175,55,0.35);
-    }
-
-    .time {
-      font-size:12px;
-      opacity:0.7;
-      margin-top:6px;
-    }
-  </style>
-</head>
-
-<body>
-  <div class="wrap">
-    <div class="card">
-      <h1>Chat with GVH</h1>
-      <div class="small">We reply instantly — type your parcel details.</div>
-
-      <div class="form-row">
-        <input id="name" placeholder="Name">
-        <input id="phone" placeholder="Phone">
+// add message bubble
+function addBubble(text, sender, time) {
+  const row = document.createElement("div");
+  row.className = "msg " + sender;
+  row.innerHTML = `
+      <div class="bubble">
+        ${text}
+        <div class="time">${time}</div>
       </div>
+    `;
+  messagesDiv.appendChild(row);
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
 
-      <input id="pickup" placeholder="Pickup area">
-      <input id="dest" placeholder="Destination">
-      <textarea id="message" rows="3" placeholder="Message (parcel details)"></textarea>
+// SEND MESSAGE
+document.getElementById("sendBtn").onclick = () => {
+  const name = document.getElementById("name").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const pickup = document.getElementById("pickup").value.trim();
+  const dest = document.getElementById("dest").value.trim();
+  const msg = document.getElementById("message").value.trim();
 
-      <button id="sendBtn">Send Message</button>
+  if (!msg) return alert("Please type a message");
 
-      <div class="messages" id="messages"></div>
-    </div>
-  </div>
+  // Save user info once
+  db.ref("chats/" + chatId).update({ name, phone, pickup, dest });
 
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.25.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.25.0/firebase-database-compat.js"></script>
+  // Save message
+  db.ref("chats/" + chatId + "/messages").push({
+    message: msg,
+    timestamp: Date.now(),
+    sender: "guest"
+  });
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDVcsRaPihq3hoNiEjnIyUgncIL98nJh04",
-      authDomain: "gvh30-40e07.firebaseapp.com",
-      databaseURL: "https://gvh30-40e07-default-rtdb.asia-southeast1.firebasedatabase.app/",
-      projectId: "gvh30-40e07",
-      storageBucket: "gvh30-40e07.firebasestorage.app",
-      messagingSenderId: "999635428816",
-      appId: "1:999635428816:web:15a48e752b1621c84005d5"
-    };
+  document.getElementById("message").value = "";
+};
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-
-    // Guest ID
-    let guestId = localStorage.getItem("gvh_guestId");
-    if (!guestId) {
-      guestId = "g_" + Math.random().toString(36).substring(2,10);
-      localStorage.setItem("gvh_guestId", guestId);
-    }
-
-    const messagesDiv = document.getElementById("messages");
-
-    function addBubble(text, sender, time){
-      const row = document.createElement("div");
-      row.className = "msg " + sender;
-
-      row.innerHTML = `
-        <div class="bubble">
-          ${text}
-          <div class="time">${time}</div>
-        </div>
-      `;
-
-      messagesDiv.appendChild(row);
-      messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    }
-
-    // Send
-    document.getElementById("sendBtn").onclick = () => {
-      const payload = {
-        guestId,
-        name: document.getElementById("name").value.trim(),
-        phone: document.getElementById("phone").value.trim(),
-        pickup: document.getElementById("pickup").value.trim(),
-        dest: document.getElementById("dest").value.trim(),
-        message: document.getElementById("message").value.trim(),
-        timestamp: Date.now(),
-        from: "guest"
-      };
-
-      if (!payload.message) return alert("Please type a message");
-
-      db.ref("chats").push(payload);
-      document.getElementById("message").value = "";
-    };
-
-    // Load chat
-    db.ref("chats").orderByChild("guestId").equalTo(guestId).on("value", snap => {
-      messagesDiv.innerHTML = "";
-
-      snap.forEach(child => {
-        const msg = child.val();
-        const time = new Date(msg.timestamp).toLocaleString();
-
-        addBubble(msg.message, "guest", time);
-
-        if (msg.replies) {
-          Object.values(msg.replies).forEach(r => {
-            addBubble("GVH: " + r.message, "admin", new Date(r.ts).toLocaleString());
-          });
-        }
-      });
-    });
-  </script>
-</body>
-</html>
+// LOAD MESSAGES
+db.ref("chats/" + chatId + "/messages").on("value", snap => {
+  messagesDiv.innerHTML = "";
+  snap.forEach(child => {
+    const msg = child.val();
+    addBubble(
+      (msg.sender === "admin" ? "GVH: " : "") + msg.message,
+      msg.sender,
+      new Date(msg.timestamp).toLocaleString()
+    );
+  });
+});
+</script>
