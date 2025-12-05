@@ -3,80 +3,70 @@ const firebaseConfig = {
   apiKey: "AIzaSyDVcsRaPihq3hoNiEjnIyUgncIL98nJh04",
   authDomain: "gvh30-40e07.firebaseapp.com",
   databaseURL: "https://gvh30-40e07-default-rtdb.asia-southeast1.firebasedatabase.app/",
-  projectId: "gvh30-40e07",
-  storageBucket: "gvh30-40e07.firebasestorage.app",
-  messagingSenderId: "999635428816",
-  appId: "1:999635428816:web:15a48e752b1621c84005d5"
+  projectId: "gvh30-40e07"
 };
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// CREATE OR GET CHAT THREAD
-let chatId = localStorage.getItem("gvh_chatId");
-
-if (!chatId) {
-  chatId = db.ref("chats").push().key; 
-  localStorage.setItem("gvh_chatId", chatId);
-
-  db.ref("chats/" + chatId).set({
-    chatId,
-    name: "",
-    phone: "",
-    pickup: "",
-    dest: "",
-    createdAt: Date.now()
-  });
+// Unique guest ID
+let guestId = localStorage.getItem("gvh_guestId");
+if (!guestId) {
+  guestId = "g_" + Math.random().toString(36).substr(2, 9);
+  localStorage.setItem("gvh_guestId", guestId);
 }
 
 const messagesDiv = document.getElementById("messages");
 
-// add message bubble
 function addBubble(text, sender, time) {
   const row = document.createElement("div");
   row.className = "msg " + sender;
   row.innerHTML = `
-      <div class="bubble">
-        ${text}
-        <div class="time">${time}</div>
-      </div>
-    `;
+    <div class="bubble">
+      ${text}
+      <div class="time">${time}</div>
+    </div>
+  `;
   messagesDiv.appendChild(row);
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
 
 // SEND MESSAGE
 document.getElementById("sendBtn").onclick = () => {
-  const name = document.getElementById("name").value.trim();
-  const phone = document.getElementById("phone").value.trim();
-  const pickup = document.getElementById("pickup").value.trim();
-  const dest = document.getElementById("dest").value.trim();
   const msg = document.getElementById("message").value.trim();
+  if (!msg) return alert("Enter a message");
 
-  if (!msg) return alert("Please type a message");
+  const payload = {
+    text: msg,
+    sender: "guest",
+    timestamp: Date.now()
+  };
 
-  // Save user info once
-  db.ref("chats/" + chatId).update({ name, phone, pickup, dest });
-
-  // Save message
-  db.ref("chats/" + chatId + "/messages").push({
-    message: msg,
-    timestamp: Date.now(),
-    sender: "guest"
+  // Save basic user details if not saved before
+  db.ref("chats/" + guestId).update({
+    name: document.getElementById("name").value.trim(),
+    phone: document.getElementById("phone").value.trim(),
+    pickup: document.getElementById("pickup").value.trim(),
+    dest: document.getElementById("dest").value.trim(),
+    createdAt: Date.now()
   });
+
+  // Push message
+  db.ref("chats/" + guestId + "/messages").push(payload);
 
   document.getElementById("message").value = "";
 };
 
-// LOAD MESSAGES
-db.ref("chats/" + chatId + "/messages").on("value", snap => {
+// LOAD MESSAGES LIVE
+db.ref("chats/" + guestId + "/messages").on("value", snap => {
   messagesDiv.innerHTML = "";
+
   snap.forEach(child => {
-    const msg = child.val();
+    const m = child.val();
     addBubble(
-      (msg.sender === "admin" ? "GVH: " : "") + msg.message,
-      msg.sender,
-      new Date(msg.timestamp).toLocaleString()
+      (m.sender === "admin" ? "GVH: " : "") + m.text,
+      m.sender === "admin" ? "admin" : "guest",
+      new Date(m.timestamp).toLocaleString()
     );
   });
 });
