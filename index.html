@@ -56,10 +56,63 @@
       <div class="quote">“Your Parcel, Our Priority.”</div>
       <div class="author">— GVH Team</div>
     </div>
+<label>Courier Partner</label>
+      <select id="select_courier_partner" required>
+        <option value="">Choose</option>
+        <option>Blue Dart</option>
+        <option>DTDC</option>
+        <option>Delhivery</option>
+      </select>
 
+      <label>Shipping Mode</label>
+      <select id="shipping_mode" required>
+        <option value="">Choose</option>
+        <option>Domestic Express</option>
+        <option>Air Freight</option>
+        <option>Sea Freight</option>
+        <option>Road Freight</option>
+        <option>International Courier</option>
+      </select>
+
+      <label>Origin Pincode</label>
+      <input id="origin_pincode" required>
+
+      <label>Destination Pincode</label>
+      <input id="destination_pincode" required>
+
+      <label>Product Description</label>
+      <input id="product" required>
+
+      <label>Weight (kg)</label>
+      <input id="weight" type="number" required>
+
+      <label>Dimensions (cm) L × W × H</label>
+      <div style="display:flex;gap:10px">
+        <input id="length" type="number" placeholder="L">
+        <input id="width" type="number" placeholder="W">
+        <input id="height" type="number" placeholder="H">
+      </div>
+
+      <label>Contact Name</label>
+      <input id="contact_name" required>
+
+      <label>Phone</label>
+      <input id="contact_phone" required>
+
+      <label>Email (optional)</label>
+      <input id="contact_email">
+
+      <button type="button" id="submitBtn" class="btn" style="margin-top:15px">Submit Quote</button>
+    </form>
+
+    <div id="success" class="success">Quote submitted successfully!</div>
+
+  </div>
+</div>
     <!-- CHAT BUTTON -->
     <a href="chat.html" class="btn">Open Live Chat</a>
   </div>
 
 </body>
 </html>
+
