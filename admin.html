@@ -11,28 +11,28 @@ const db = firebase.database();
 
 const chatList = document.getElementById("chatList");
 
-// LOAD CHAT THREADS
+// LOAD ALL CHAT THREADS
 db.ref("chats").on("value", snap => {
   chatList.innerHTML = "";
 
-  snap.forEach(child => {
-    const chat = child.val();
-    const chatId = child.key;
+  snap.forEach(chatSnap => {
+    const chatId = chatSnap.key;
+    const chat = chatSnap.val();
 
     let html = `
       <div class="reply-box">
         <b>${chat.name || "Guest"} (${chat.phone || "No Phone"})</b><br>
+        <small>Pickup: ${chat.pickup || "N/A"} — Dest: ${chat.dest || "N/A"}</small><br>
         <small>Chat ID: ${chatId}</small><br><br>
     `;
 
-    // Load messages inside the chat
+    // Messages
     if (chat.messages) {
       Object.values(chat.messages).forEach(m => {
-        const sender = m.sender === "admin" ? "Admin" : "Customer";
         html += `
           <div style="margin-top:6px;">
             <span style="color:${m.sender === "admin" ? "#d4af37" : "#fff"};">
-              ${sender}: ${m.message}
+              ${m.sender === "admin" ? "Admin" : "Customer"}: ${m.text}
             </span>
           </div>
         `;
@@ -49,17 +49,17 @@ db.ref("chats").on("value", snap => {
   });
 });
 
-// SEND REPLY
-function sendReply(id) {
-  const msg = document.getElementById("reply_" + id).value.trim();
-  if (!msg) return alert("Type a reply.");
+// SEND ADMIN REPLY
+function sendReply(chatId) {
+  const msg = document.getElementById("reply_" + chatId).value.trim();
+  if (!msg) return alert("Type a reply");
 
-  db.ref("chats/" + id + "/messages").push({
-    message: msg,
+  db.ref("chats/" + chatId + "/messages").push({
+    text: msg,
     sender: "admin",
     timestamp: Date.now()
   });
 
-  document.getElementById("reply_" + id).value = "";
+  document.getElementById("reply_" + chatId).value = "";
 }
 </script>
